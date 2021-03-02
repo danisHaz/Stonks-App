@@ -3,14 +3,23 @@ import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
+import com.example.stonksapp.financial.*;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentContainerView;
 
 import android.os.Bundle;
 import android.view.View;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.lang.Thread;
+
 public class MainActivity extends AppCompatActivity {
+    private static FinancialMainRetriever newInstance = new FinancialMainRetriever();
+    private static List<String> result;
+    private static int maxSymbols = 15;
 
     public MainActivity() {
         super(R.layout.activity_main);
@@ -27,7 +36,37 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO: make some defines of static things
 
-        // TODO: schedule some background work here
+        // TODO: rewrite to RxJava
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                result = newInstance.getListOfMainSymbols("US", maxSymbols);
+            }
+        });
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (java.lang.InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("tag", "result is delivered");
+
+        if (result == null)
+            throw new java.lang.NullPointerException("Result array is null");
+
+        int counter = 0;
+        for (String str: result)
+            Log.d(String.format("%d", counter), str);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // TODO: start some background work here
     }
 
     private void setDefaultFragment() {
@@ -48,22 +87,28 @@ public class MainActivity extends AppCompatActivity {
     private void setWatchCurrentStonksFragment() {
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, WatchCurrentStonksFragment.createInstance(), Constants.WATCH_STONKS_TAG)
+                .replace(R.id.frag, WatchCurrentStonksFragment.createInstance(),
+                        Constants.WATCH_STONKS_TAG)
                 .commit();
     }
 
     private void setManageFavouritesStonksFragment() {
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(), Constants.MANAGE_YOUR_FAVOURITES_TAG)
+                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(),
+                        Constants.MANAGE_YOUR_FAVOURITES_TAG)
                 .commit();
     }
 
-    public void onWatchProgramClick(View view) {
-        this.setWatchCurrentStonksFragment();
+    public void onWatchCurrentStonksClick(View view) {
+        FragmentContainerView fragment = (FragmentContainerView) findViewById(R.id.frag);
+        if (fragment.getTag() != Constants.WATCH_STONKS_TAG)
+            this.setWatchCurrentStonksFragment();
     }
 
-    public void onManageFavouritesClick(View view) {
-        this.setManageFavouritesStonksFragment();
+    public void onManageFavouriteStonksClick(View view) {
+        FragmentContainerView fragment = (FragmentContainerView) findViewById(R.id.frag);
+        if (fragment.getTag() != Constants.MANAGE_YOUR_FAVOURITES_TAG)
+            this.setManageFavouritesStonksFragment();
     }
 }

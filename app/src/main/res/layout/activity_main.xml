@@ -28,19 +28,21 @@
 
         <Button
             android:id="@+id/watchProgram"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:onClick="onWatchProgramClick"
+            android:onClick="onWatchCurrentStonksClick"
             android:text="@string/currentStonks"
             android:background="@drawable/main_activity_buttons_style"
+            app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/manageFavourites"
             app:layout_constraintTop_toTopOf="parent"/>
         <Button
             android:id="@+id/manageFavourites"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/favourites"
-            android:onClick="onManageFavouritesClick"
+            android:onClick="onManageFavouriteStonksClick"
             android:background="@drawable/main_activity_buttons_style"
             app:layout_constraintStart_toEndOf="@+id/watchProgram"
             app:layout_constraintTop_toTopOf="parent"
