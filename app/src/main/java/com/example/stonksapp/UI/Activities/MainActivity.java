@@ -17,9 +17,6 @@ import java.util.List;
 import java.lang.Thread;
 
 public class MainActivity extends AppCompatActivity {
-    private static FinancialMainRetriever newInstance = new FinancialMainRetriever();
-    private static List<String> result;
-    private static int maxSymbols = 15;
 
     public MainActivity() {
         super(R.layout.activity_main);
@@ -38,28 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO: rewrite to RxJava
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                result = newInstance.getListOfMainSymbols("US", maxSymbols);
-            }
-        });
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (java.lang.InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("tag", "result is delivered");
-
-        if (result == null)
-            throw new java.lang.NullPointerException("Result array is null");
-
-        int counter = 0;
-        for (String str: result)
-            Log.d(String.format("%d", counter), str);
     }
 
     @Override

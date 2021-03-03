@@ -8,7 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
+
+import com.neovisionaries.ws.client.WebSocketFactory;
+import com.neovisionaries.ws.client.WebSocket;
 
 public class WatchCurrentStonksFragment extends Fragment {
 
