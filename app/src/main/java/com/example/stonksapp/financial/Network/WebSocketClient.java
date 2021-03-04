@@ -17,7 +17,7 @@ public class WebSocketClient {
     private WebSocket socket;
     private String socketUri;
 
-    WebSocketClient(String uri) {
+    public WebSocketClient(String uri) {
         socketUri = uri;
     }
 
@@ -58,6 +58,14 @@ public class WebSocketClient {
         socket.disconnect();
     }
 
+    public WebSocket getSocket() {
+        return socket;
+    }
+
+    public void sendTextViaSocket(String someText) {
+        socket.sendText(someText);
+    }
+
     // class to listen to WebSocket actions
     public class SocketListener extends WebSocketAdapter {
         private String listenerTag = "SocketListenerTag";
@@ -65,6 +73,11 @@ public class WebSocketClient {
         @Override
         public void onConnected(WebSocket ws, Map<String, List<String>> headers) throws Exception {
             super.onConnected(ws, headers);
+        }
+
+        @Override
+        public void onTextMessage(WebSocket ws, String message) {
+            Log.d("MessageReceived", message);
         }
 
         @Override
