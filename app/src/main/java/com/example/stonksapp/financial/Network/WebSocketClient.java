@@ -1,12 +1,13 @@
 package com.example.stonksapp.financial.Network;
 
-import com.example.stonksapp.Constants;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
+import com.neovisionaries.ws.client.WebSocketException;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 
@@ -14,12 +15,13 @@ import android.util.Log;
 
 public class WebSocketClient {
     private WebSocket socket;
+    private String socketUri;
 
-    WebSocketClient() {
-
+    WebSocketClient(String uri) {
+        socketUri = uri;
     }
 
-    public void reconnect() {
+    private void reconnect() {
         try {
             socket.recreate().connect();
         } catch (java.io.IOException e) {
@@ -38,10 +40,13 @@ public class WebSocketClient {
                     reconnect();
                 } else {
                     try {
-                        socket = new WebSocketFactory().createSocket(
-                                Constants.MAIN_API_URI + Constants.API_TOKEN);
 
-                    } catch (java.io.IOException e) {
+                        socket = new WebSocketFactory().createSocket(
+                                socketUri);
+                        socket.addListener(new SocketListener());
+                        socket.connect();
+
+                    } catch (IOException | WebSocketException e) {
                         e.printStackTrace();
                     }
                 }
@@ -49,6 +54,11 @@ public class WebSocketClient {
         }).start();
     }
 
+    public void disconnect() {
+        socket.disconnect();
+    }
+
+    // class to listen to WebSocket actions
     public class SocketListener extends WebSocketAdapter {
         private String listenerTag = "SocketListenerTag";
 
