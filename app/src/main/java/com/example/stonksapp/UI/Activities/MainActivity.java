@@ -17,17 +17,19 @@ import java.util.List;
 import java.lang.Thread;
 
 public class MainActivity extends AppCompatActivity {
-
-    public MainActivity() {
-        super(R.layout.activity_main);
-    }
+    private static boolean isConnectionProvided = true;
 
     private static byte defaultFragment = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
+        int properContentView = Constants.isNetworkConnectionProvided(this)
+                ? R.layout.activity_main : R.layout.activity_main_no_network;
+
+        setContentView(properContentView);
+
+        if (properContentView == R.layout.activity_main && savedInstanceState == null) {
             this.setDefaultFragment();
         }
 
