@@ -40,8 +40,9 @@ public class WebSocketClient {
                 } else {
                     try {
 
-                        socket = new WebSocketFactory().createSocket(
-                                socketUri);
+                        socket = new WebSocketFactory()
+                                .setConnectionTimeout(5000)
+                                .createSocket(socketUri);
                         socket.addListener(new SocketListener());
                         socket.connect();
 

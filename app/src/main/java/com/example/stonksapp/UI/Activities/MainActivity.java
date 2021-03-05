@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void setWatchCurrentStonksFragment() {
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, WatchCurrentStonksFragment.createInstance(),
+                .replace(R.id.frag, WatchCurrentStonksFragment.createInstance(new Bundle()),
                         Constants.WATCH_STONKS_TAG)
                 .commit();
     }
