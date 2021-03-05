@@ -15,19 +15,35 @@ public class ChangeCurrentPricesService extends JobService{
 
     public ChangeCurrentPricesService() { }
 
-    @Override
-    public boolean onStartJob(JobParameters params) {
-
+    private static void subscribeOnLastPrices() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!BackgroundTaskHandler.getClient().isConnected[0]) {
-                    //pass
-                }
                 BackgroundTaskHandler.getClient().sendTextViaSocket(
-                        String.format(Constants.LAST_PRICE_UPDATES_JSON_TEMPLATE, "AAPL"));
+                        String.format(
+                                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE, "AAPL"));
             }
         }).start();
+    }
+
+    private static void unsubscribeFromLastPrices() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BackgroundTaskHandler.getClient().sendTextViaSocket(
+                        String.format(
+                                Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE, "AAPL"));
+            }
+        }).start();
+    }
+
+    @Override
+    public boolean onStartJob(JobParameters params) {
+        int taskId = params.getExtras().getInt("taskId");
+        if (taskId == Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID)
+            subscribeOnLastPrices();
+        else
+            unsubscribeFromLastPrices();
 
         return true;
     }

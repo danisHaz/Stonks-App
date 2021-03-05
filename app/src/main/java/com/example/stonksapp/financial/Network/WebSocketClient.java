@@ -5,7 +5,6 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import com.neovisionaries.ws.client.WebSocketException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class WebSocketClient {
 
     public void connect() {
         // TODO: rewrite to RxJava
-        new Thread(new Runnable() {
+        Thread thready = new Thread(new Runnable() {
             @Override
             public void run() {
                 if (socket != null) {
@@ -54,11 +53,19 @@ public class WebSocketClient {
                     }
                 }
             }
-        }).start();
+        });
+        thready.start();
+
+        try {
+            thready.join();
+        } catch (java.lang.InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void disconnect() {
         socket.disconnect();
+        isConnected[0] = false;
     }
 
     public WebSocket getSocket() {
@@ -112,6 +119,13 @@ public class WebSocketClient {
             }
 
             reconnect();
+        }
+
+        @Override
+        public void onPongFrame(WebSocket ws, WebSocketFrame frame) throws Exception {
+            super.onPongFrame(ws, frame);
+            Log.d("PingPong", frame.toString());
+            ws.sendPing("Ping");
         }
     }
 }

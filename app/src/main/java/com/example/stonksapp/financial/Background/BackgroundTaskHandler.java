@@ -1,11 +1,13 @@
 package com.example.stonksapp.financial.Background;
 import com.example.stonksapp.financial.Background.ChangeCurrentPricesService;
+import com.example.stonksapp.Constants;
 
 import android.util.Log;
 import android.content.ComponentName;
 import android.app.job.JobScheduler;
 import android.app.job.JobInfo;
 import android.content.Context;
+import android.os.PersistableBundle;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.financial.Network.WebSocketClient;
@@ -23,9 +25,15 @@ public class BackgroundTaskHandler {
         client.connect();
     }
 
-    private static void scheduleJob(Class<? extends android.app.job.JobService> cls, Context context) {
+    private static void scheduleJob(Class<? extends android.app.job.JobService> cls,
+                                    Context context,
+                                    byte taskId) {
+        PersistableBundle bundle = new PersistableBundle();
+        bundle.putInt("taskId", taskId);
+
         ComponentName componentName = new ComponentName(context, cls);
         JobInfo.Builder builder = new JobInfo.Builder(currJobNum++, componentName)
+                .setExtras(bundle)
                 .setRequiresCharging(false);
 
         JobScheduler scheduler =
@@ -44,13 +52,26 @@ public class BackgroundTaskHandler {
         if (client == null)
             createSocketConnection();
 
-        scheduleJob(ChangeCurrentPricesService.class, context);
+        scheduleJob(ChangeCurrentPricesService.class, context,
+                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID);
     }
 
+    @Deprecated
     public static void unsubscribeFromLastPriceUpdates() {
         if (client == null)
             Log.d("D", "Want to unsubscribe from updates when connection does not exist");
         else
             client.disconnect();
+    }
+
+    public static void unsubscribeFromLastPriceUpdates(Context context, byte socketConnectionStop) {
+        if (client == null)
+            Log.d("D", "Want to unsubscribe from updates when connection does not exist");
+        else {
+            scheduleJob(ChangeCurrentPricesService.class, context,
+                    Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID);
+            if (socketConnectionStop == 1)
+                client.disconnect();
+        }
     }
 }

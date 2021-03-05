@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates();
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this, (byte)0);
     }
 
     private void setDefaultFragment() {
