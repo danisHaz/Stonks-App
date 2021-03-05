@@ -6,6 +6,7 @@ public class Constants {
     public static String MAIN_API_URI = "wss://ws.finnhub.io?token=";
     public static String API_TOKEN = "c0v7fl748v6pr2p77re0";
     public static String LAST_PRICE_UPDATES_JSON_TEMPLATE = "{\"type\": \"subscribe\", \"symbol\": \"%s\"}";
+    public static String LAST_PRICE_UPDATES_JSON_TEMPLATE_TEST = "{'type': 'subscribe', 'symbol': '%s'}";
 
     public static boolean isNetworkConnectionProvided(android.content.Context context) {
         android.net.ConnectivityManager manager =

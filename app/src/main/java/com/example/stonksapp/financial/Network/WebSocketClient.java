@@ -16,17 +16,17 @@ import android.util.Log;
 public class WebSocketClient {
     private WebSocket socket;
     private String socketUri;
+    public final boolean[] isConnected = new boolean[1];
 
     public WebSocketClient(String uri) {
         socketUri = uri;
+        isConnected[0] = false;
     }
 
     private void reconnect() {
         try {
             socket.recreate().connect();
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-        } catch (WebSocketException e) {
+        } catch (java.io.IOException | WebSocketException e) {
             e.printStackTrace();
         }
     }
@@ -46,6 +46,9 @@ public class WebSocketClient {
                         socket.addListener(new SocketListener());
                         socket.connect();
 
+                        isConnected[0] = true;
+                        Log.d("Socket", "Socket connection done");
+
                     } catch (IOException | WebSocketException e) {
                         e.printStackTrace();
                     }
@@ -64,6 +67,7 @@ public class WebSocketClient {
 
     public void sendTextViaSocket(String someText) {
         socket.sendText(someText);
+        Log.d("Socket", "Message sent");
     }
 
     // class to listen to WebSocket actions

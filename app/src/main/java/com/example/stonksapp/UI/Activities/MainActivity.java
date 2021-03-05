@@ -3,6 +3,7 @@ import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.*;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
             this.setDefaultFragment();
+
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(this);
         }
 
         // TODO: make some defines of static things
@@ -44,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // TODO: start some background work here
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates();
     }
 
     private void setDefaultFragment() {

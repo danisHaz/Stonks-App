@@ -18,12 +18,12 @@ public class BackgroundTaskHandler {
         return client;
     }
 
-    public void createSocketConnection() {
+    private static void createSocketConnection() {
         client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN);
         client.connect();
     }
 
-    private void scheduleJob(Class<? extends android.app.job.JobService> cls, Context context) {
+    private static void scheduleJob(Class<? extends android.app.job.JobService> cls, Context context) {
         ComponentName componentName = new ComponentName(context, cls);
         JobInfo.Builder builder = new JobInfo.Builder(currJobNum++, componentName)
                 .setRequiresCharging(false);
@@ -40,14 +40,14 @@ public class BackgroundTaskHandler {
         }
     }
 
-    public void subscribeOnLastPriceUpdates(Context context) {
+    public static void subscribeOnLastPriceUpdates(Context context) {
         if (client == null)
             createSocketConnection();
 
         scheduleJob(ChangeCurrentPricesService.class, context);
     }
 
-    public void unsubscribeFromLastPriceUpdates() {
+    public static void unsubscribeFromLastPriceUpdates() {
         if (client == null)
             Log.d("D", "Want to unsubscribe from updates when connection does not exist");
         else

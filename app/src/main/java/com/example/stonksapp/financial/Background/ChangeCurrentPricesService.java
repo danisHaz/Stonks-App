@@ -6,6 +6,9 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 
+import org.json.JSONObject;
+import android.util.Log;
+
 import java.lang.Thread;
 
 public class ChangeCurrentPricesService extends JobService{
@@ -14,9 +17,13 @@ public class ChangeCurrentPricesService extends JobService{
 
     @Override
     public boolean onStartJob(JobParameters params) {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
+                while (!BackgroundTaskHandler.getClient().isConnected[0]) {
+                    //pass
+                }
                 BackgroundTaskHandler.getClient().sendTextViaSocket(
                         String.format(Constants.LAST_PRICE_UPDATES_JSON_TEMPLATE, "AAPL"));
             }

@@ -27,6 +27,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     compile 'com.neovisionaries:nv-websocket-client:2.13'
+    implementation group: 'javax.persistence', name: 'persistence-api', version: '1.0'
 
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"
