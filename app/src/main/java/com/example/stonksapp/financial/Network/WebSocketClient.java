@@ -6,6 +6,12 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
+import com.example.stonksapp.financial.TradesPrices;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.List;
@@ -89,7 +95,14 @@ public class WebSocketClient {
 
         @Override
         public void onTextMessage(WebSocket ws, String message) {
-            Log.d("MessageReceived", message);
+            Log.i("MessageReceived", message);
+
+            try {
+                Gson gson = (new GsonBuilder()).create();
+                TradesPrices curPrices = gson.fromJson(message, TradesPrices.class);
+            } catch (JsonSyntaxException e) {
+                Log.d("Err", "Provided class for JSON is not valid");
+            }
         }
 
         @Override

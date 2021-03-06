@@ -10,40 +10,35 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import java.lang.Thread;
+import java.util.ArrayList;
 
 public class ChangeCurrentPricesService extends JobService{
 
     public ChangeCurrentPricesService() { }
+    private static String[] list;
 
-    private static void subscribeOnLastPrices() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BackgroundTaskHandler.getClient().sendTextViaSocket(
-                        String.format(
-                                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE, "AAPL"));
-            }
-        }).start();
-    }
-
-    private static void unsubscribeFromLastPrices() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BackgroundTaskHandler.getClient().sendTextViaSocket(
-                        String.format(
-                                Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE, "AAPL"));
-            }
-        }).start();
+    private static void lastPricesUpdate(final String json) {
+        for (final String symbol: list) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BackgroundTaskHandler.getClient().sendTextViaSocket(
+                            String.format(
+                                    json, symbol));
+                }
+            }).start();
+        }
     }
 
     @Override
     public boolean onStartJob(JobParameters params) {
         int taskId = params.getExtras().getInt("taskId");
+        list = params.getExtras().getStringArray(Constants.CHOSEN_SYMBOLS);
+
         if (taskId == Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID)
-            subscribeOnLastPrices();
+            lastPricesUpdate(Constants.SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE);
         else
-            unsubscribeFromLastPrices();
+            lastPricesUpdate(Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE);
 
         return true;
     }

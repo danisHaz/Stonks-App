@@ -4,7 +4,6 @@ import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
-import com.example.stonksapp.financial.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -14,13 +13,14 @@ import android.view.View;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.lang.Thread;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isConnectionProvided = true;
 
     private static byte defaultFragment = 0;
+    private static WatchCurrentStonksFragment watchCurrentStonksFragment;
+    private static ManageFavouriteStonksFragment manageFavouriteStonksFragment;
+    private static ArrayList<String> symbolArray = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +33,18 @@ public class MainActivity extends AppCompatActivity {
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
             this.setDefaultFragment();
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(this);
+            // HTTP request
+            symbolArray.add("AAPL");
+
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("symbolArray", symbolArray);
+            watchCurrentStonksFragment = WatchCurrentStonksFragment.createInstance(bundle);
+
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                    this, (String[]) symbolArray.toArray());
         }
 
         // TODO: make some defines of static things
-
-        // TODO: rewrite to RxJava
 
     }
 
@@ -53,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this, (byte)0);
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
+                (String[]) symbolArray.toArray(),
+                (byte)0);
     }
 
     private void setDefaultFragment() {

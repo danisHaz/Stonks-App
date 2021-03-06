@@ -27,9 +27,10 @@ public class BackgroundTaskHandler {
 
     private static void scheduleJob(Class<? extends android.app.job.JobService> cls,
                                     Context context,
-                                    byte taskId) {
+                                    byte taskId, String[] chosenSymbols) {
         PersistableBundle bundle = new PersistableBundle();
         bundle.putInt("taskId", taskId);
+        bundle.putStringArray(Constants.CHOSEN_SYMBOLS, chosenSymbols);
 
         ComponentName componentName = new ComponentName(context, cls);
         JobInfo.Builder builder = new JobInfo.Builder(currJobNum++, componentName)
@@ -48,12 +49,12 @@ public class BackgroundTaskHandler {
         }
     }
 
-    public static void subscribeOnLastPriceUpdates(Context context) {
+    public static void subscribeOnLastPriceUpdates(Context context, String[] chosenSymbols) {
         if (client == null)
             createSocketConnection();
 
         scheduleJob(ChangeCurrentPricesService.class, context,
-                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID);
+                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID, chosenSymbols);
     }
 
     @Deprecated
@@ -64,12 +65,16 @@ public class BackgroundTaskHandler {
             client.disconnect();
     }
 
-    public static void unsubscribeFromLastPriceUpdates(Context context, byte socketConnectionStop) {
+    public static void unsubscribeFromLastPriceUpdates(Context context,
+                                                       String[] chosenSymbols,
+                                                       byte socketConnectionStop) {
         if (client == null)
             Log.d("D", "Want to unsubscribe from updates when connection does not exist");
         else {
             scheduleJob(ChangeCurrentPricesService.class, context,
-                    Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID);
+                    Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID,
+                    chosenSymbols);
+
             if (socketConnectionStop == 1)
                 client.disconnect();
         }

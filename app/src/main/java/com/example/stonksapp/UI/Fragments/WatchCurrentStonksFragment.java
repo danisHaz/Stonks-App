@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -20,20 +19,34 @@ import android.os.Bundle;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
+import com.example.stonksapp.financial.TradesPrices;
+
+import java.util.ArrayList;
 
 
 public class WatchCurrentStonksFragment extends Fragment {
+    private CustomItemAdapter adapter;
+
 
     public WatchCurrentStonksFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * @param bundle: Bundle should have:
+     * symbolArray: ArrayList<String>
+     *
+     * @return
+     */
     public static WatchCurrentStonksFragment createInstance(Bundle bundle) {
         WatchCurrentStonksFragment frag =  new WatchCurrentStonksFragment();
         frag.setArguments(bundle);
         return frag;
     }
 
+    public void updateCurrentStonks(TradesPrices prices) {
+        // updater code here
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,8 +62,9 @@ public class WatchCurrentStonksFragment extends Fragment {
                               @Nullable Bundle bundle) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new CustomItemAdapter(getArguments());
 
-        recyclerView.setAdapter(new CustomItemAdapter(getArguments()));
+        recyclerView.setAdapter(adapter);
     }
 
 
@@ -60,15 +74,21 @@ public class WatchCurrentStonksFragment extends Fragment {
         CustomViewHolder(@NonNull View v) {
             super(v);
             cell = (TextView) v.findViewById(R.id.simpleTextView);
-            Log.d("tag", "tagtagtag");
         }
     }
 
     private static class CustomItemAdapter extends RecyclerView.Adapter<CustomViewHolder> {
-        private int argCount = 1;
+        private int argCount;
+        private ArrayList<String> symbolList;
 
         CustomItemAdapter(Bundle bundle) {
-            // add code
+            try {
+                symbolList = bundle.getStringArrayList("symbolArray");
+                argCount = symbolList.size();
+            } catch (java.lang.NullPointerException e) {
+                Log.d("Err", "symbolList not provided");
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -81,9 +101,12 @@ public class WatchCurrentStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
-                holder.cell.setText("Some data about Stonks");
-            } catch (java.lang.ArrayIndexOutOfBoundsException
-                    | java.lang.NullPointerException e) {
+                holder.cell.setText(symbolList.get(pos));
+            } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+                Log.d("Err", "index out of bound when set text to cell");
+                e.printStackTrace();
+            } catch (java.lang.NullPointerException e) {
+                Log.d("Err", "holder.cell is null");
                 e.printStackTrace();
             }
         }
