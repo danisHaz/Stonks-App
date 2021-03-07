@@ -35,6 +35,7 @@ public class WatchCurrentStonksFragment extends Fragment {
     /**
      * @param bundle: Bundle should have:
      * symbolArray: ArrayList<String>
+     * priceArray: ArrayList<String>
      *
      * @return
      */
@@ -44,8 +45,16 @@ public class WatchCurrentStonksFragment extends Fragment {
         return frag;
     }
 
-    public void updateCurrentStonks(TradesPrices prices) {
-        // updater code here
+    public int updateCurrentStonks(TradesPrices prices) {
+        for (int pos = 0; pos < adapter.symbolList.size(); pos++) {
+            String chosenSymbol = adapter.symbolList.get(pos);
+            if (prices.data[prices.data.length - 1].symbol.equals(chosenSymbol)) {
+                adapter.priceList.set(pos, prices.data[prices.data.length - 1].lastPrice);
+                adapter.notifyItemChanged(pos);
+                return Constants.SUCCESS;
+            }
+        }
+        return Constants.FAILURE;
     }
 
     @Override
@@ -70,21 +79,25 @@ public class WatchCurrentStonksFragment extends Fragment {
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
+        final TextView priceCell;
 
         CustomViewHolder(@NonNull View v) {
             super(v);
             cell = (TextView) v.findViewById(R.id.simpleTextView);
+            priceCell = (TextView) v.findViewById(R.id.priceTextView);
         }
     }
 
     private static class CustomItemAdapter extends RecyclerView.Adapter<CustomViewHolder> {
         private int argCount;
-        private ArrayList<String> symbolList;
+        public ArrayList<String> symbolList;
+        public ArrayList<String> priceList;
 
         CustomItemAdapter(Bundle bundle) {
             try {
                 symbolList = bundle.getStringArrayList("symbolArray");
                 argCount = symbolList.size();
+                priceList = bundle.getStringArrayList("priceList");
             } catch (java.lang.NullPointerException e) {
                 Log.d("Err", "symbolList not provided");
                 e.printStackTrace();
@@ -102,11 +115,12 @@ public class WatchCurrentStonksFragment extends Fragment {
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
                 holder.cell.setText(symbolList.get(pos));
+                holder.priceCell.setText(priceList.get(pos));
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                Log.d("Err", "index out of bound when set text to cell");
+                Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();
             } catch (java.lang.NullPointerException e) {
-                Log.d("Err", "holder.cell is null");
+                Log.d("Err", "holder.(price)cell is null");
                 e.printStackTrace();
             }
         }

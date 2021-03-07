@@ -7,6 +7,7 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
 import com.example.stonksapp.financial.TradesPrices;
+import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
@@ -16,16 +17,20 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 
 public class WebSocketClient {
     private WebSocket socket;
     private String socketUri;
     public final boolean[] isConnected = new boolean[1];
+    private WatchCurrentStonksFragment fragment;
 
-    public WebSocketClient(String uri) {
+    public WebSocketClient(String uri, WatchCurrentStonksFragment fragment) {
         socketUri = uri;
         isConnected[0] = false;
+        this.fragment = fragment;
     }
 
     private void reconnect() {
@@ -100,6 +105,7 @@ public class WebSocketClient {
             try {
                 Gson gson = (new GsonBuilder()).create();
                 TradesPrices curPrices = gson.fromJson(message, TradesPrices.class);
+                fragment.updateCurrentStonks(curPrices);
             } catch (JsonSyntaxException e) {
                 Log.d("Err", "Provided class for JSON is not valid");
             }

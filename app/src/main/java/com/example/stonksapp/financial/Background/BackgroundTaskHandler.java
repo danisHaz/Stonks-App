@@ -1,6 +1,6 @@
 package com.example.stonksapp.financial.Background;
-import com.example.stonksapp.financial.Background.ChangeCurrentPricesService;
 import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 
 import android.util.Log;
 import android.content.ComponentName;
@@ -20,8 +20,9 @@ public class BackgroundTaskHandler {
         return client;
     }
 
-    private static void createSocketConnection() {
-        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN);
+    private static void createSocketConnection(WatchCurrentStonksFragment fragment) {
+        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
+                fragment);
         client.connect();
     }
 
@@ -49,9 +50,10 @@ public class BackgroundTaskHandler {
         }
     }
 
-    public static void subscribeOnLastPriceUpdates(Context context, String[] chosenSymbols) {
+    public static void subscribeOnLastPriceUpdates(WatchCurrentStonksFragment fragment,
+            Context context, String[] chosenSymbols) {
         if (client == null)
-            createSocketConnection();
+            createSocketConnection(fragment);
 
         scheduleJob(ChangeCurrentPricesService.class, context,
                 Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID, chosenSymbols);

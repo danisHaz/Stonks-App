@@ -18,6 +18,9 @@ public class Constants {
     public static final byte UNSUBSCRIBE_LAST_PRICE_UPDATES_ID = 1;
     public static final String CHOSEN_SYMBOLS = "chosenSymbols";
 
+    public static final int SUCCESS = 116;
+    public static final int FAILURE = 777;
+
     public static boolean isNetworkConnectionProvided(android.content.Context context) {
         android.net.ConnectivityManager manager =
                 (android.net.ConnectivityManager) context.getSystemService(

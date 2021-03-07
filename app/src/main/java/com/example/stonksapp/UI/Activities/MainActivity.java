@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             bundle.putStringArrayList("symbolArray", symbolArray);
             watchCurrentStonksFragment = WatchCurrentStonksFragment.createInstance(bundle);
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
                     this, (String[]) symbolArray.toArray());
         }
 
