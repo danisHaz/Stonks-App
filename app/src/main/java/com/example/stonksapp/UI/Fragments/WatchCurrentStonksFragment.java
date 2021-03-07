@@ -97,7 +97,7 @@ public class WatchCurrentStonksFragment extends Fragment {
             try {
                 symbolList = bundle.getStringArrayList("symbolArray");
                 argCount = symbolList.size();
-                priceList = bundle.getStringArrayList("priceList");
+                priceList = bundle.getStringArrayList("priceArray");
             } catch (java.lang.NullPointerException e) {
                 Log.d("Err", "symbolList not provided");
                 e.printStackTrace();

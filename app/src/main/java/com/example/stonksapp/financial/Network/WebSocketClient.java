@@ -1,5 +1,6 @@
 package com.example.stonksapp.financial.Network;
 
+import com.example.stonksapp.financial.StockSymbolsArray;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -8,6 +9,8 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 
 import com.example.stonksapp.financial.TradesPrices;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.financial.StockSymbol;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
@@ -17,9 +20,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
+
+import org.json.JSONException;
 
 public class WebSocketClient {
     private WebSocket socket;
@@ -102,13 +105,24 @@ public class WebSocketClient {
         public void onTextMessage(WebSocket ws, String message) {
             Log.i("MessageReceived", message);
 
+            if (message.equals(Constants.PING_MESSAGE))
+                return;
+
+            Gson gson = (new GsonBuilder()).create();
+
             try {
-                Gson gson = (new GsonBuilder()).create();
                 TradesPrices curPrices = gson.fromJson(message, TradesPrices.class);
-                fragment.updateCurrentStonks(curPrices);
+                int resultId = fragment.updateCurrentStonks(curPrices);
+                if (resultId == Constants.SUCCESS) {
+                    Log.d("Socket Updater", "update success");
+                } else {
+                    Log.d("Socket Updater", "update failure");
+                }
             } catch (JsonSyntaxException e) {
                 Log.d("Err", "Provided class for JSON is not valid");
+                e.printStackTrace();
             }
+
         }
 
         @Override

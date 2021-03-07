@@ -4,6 +4,8 @@ import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
+import com.example.stonksapp.financial.Network.HTTPSRequestClient;
+import com.example.stonksapp.financial.StockSymbol;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private static WatchCurrentStonksFragment watchCurrentStonksFragment;
     private static ManageFavouriteStonksFragment manageFavouriteStonksFragment;
     private static ArrayList<String> symbolArray = new ArrayList<String>();
+    private static ArrayList<String> prices = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +34,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(properContentView);
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
-            this.setDefaultFragment();
 
             // HTTP request
-            symbolArray.add("AAPL");
+
+            HTTPSRequestClient client = new HTTPSRequestClient();
+            StockSymbol[] curArray = client.GET(String.format(Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
+
+            for (int pos = 0; pos < 10; pos++) {
+                symbolArray.add(curArray[pos].symbol);
+                prices.add("0.0");
+            }
+
+//            symbolArray.add("AAPL");
 
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("symbolArray", symbolArray);
+            bundle.putStringArrayList("priceArray", prices);
             watchCurrentStonksFragment = WatchCurrentStonksFragment.createInstance(bundle);
 
+            this.setDefaultFragment();
+
             BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
-                    this, (String[]) symbolArray.toArray());
+                    this, Constants.toStringArray(symbolArray));
         }
 
         // TODO: make some defines of static things
@@ -82,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private void setWatchCurrentStonksFragment() {
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, WatchCurrentStonksFragment.createInstance(new Bundle()),
+                .replace(R.id.frag, watchCurrentStonksFragment,
                         Constants.WATCH_STONKS_TAG)
                 .commit();
     }

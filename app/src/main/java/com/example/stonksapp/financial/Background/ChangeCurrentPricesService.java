@@ -18,7 +18,9 @@ public class ChangeCurrentPricesService extends JobService{
     private static String[] list;
 
     private static void lastPricesUpdate(final String json) {
+        Log.d("message", "superMessage");
         for (final String symbol: list) {
+            Log.d("symbol in last price", symbol);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
