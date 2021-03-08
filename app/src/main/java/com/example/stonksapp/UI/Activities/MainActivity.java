@@ -3,7 +3,9 @@ import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
-import com.example.stonksapp.financial.*;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
+import com.example.stonksapp.financial.Network.HTTPSRequestClient;
+import com.example.stonksapp.financial.StockSymbol;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -13,53 +15,53 @@ import android.view.View;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.lang.Thread;
 
 public class MainActivity extends AppCompatActivity {
-    private static FinancialMainRetriever newInstance = new FinancialMainRetriever();
-    private static List<String> result;
-    private static int maxSymbols = 15;
-
-    public MainActivity() {
-        super(R.layout.activity_main);
-    }
 
     private static byte defaultFragment = 0;
+    private WatchCurrentStonksFragment watchCurrentStonksFragment;
+    private ManageFavouriteStonksFragment manageFavouriteStonksFragment;
+    private static ArrayList<String> symbolArray = new ArrayList<String>();
+    private static ArrayList<String> prices = new ArrayList<String>();
+
+    public static boolean isAttached = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
+        int properContentView = Constants.isNetworkConnectionProvided(this)
+                ? R.layout.activity_main : R.layout.activity_main_no_network;
+
+        setContentView(properContentView);
+
+        if (properContentView == R.layout.activity_main && savedInstanceState == null) {
+
+            HTTPSRequestClient client = new HTTPSRequestClient();
+            StockSymbol[] curArray = client.GET(String.format(
+                    Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
+
+            for (int pos = 0; pos < 10; pos++) {
+                symbolArray.add(curArray[pos].symbol);
+                prices.add("N/A");
+            }
+
+            symbolArray.add("AAPL");
+            prices.add("N/A");
+
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("symbolArray", symbolArray);
+            bundle.putStringArrayList("priceArray", prices);
+            watchCurrentStonksFragment =
+                    WatchCurrentStonksFragment.createInstance(bundle, this);
+
             this.setDefaultFragment();
+
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
+                    this, Constants.toStringArray(symbolArray));
         }
 
         // TODO: make some defines of static things
 
-        // TODO: rewrite to RxJava
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                result = newInstance.getListOfMainSymbols("US", maxSymbols);
-            }
-        });
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (java.lang.InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("tag", "result is delivered");
-
-        if (result == null)
-            throw new java.lang.NullPointerException("Result array is null");
-
-        int counter = 0;
-        for (String str: result)
-            Log.d(String.format("%d", counter), str);
     }
 
     @Override
@@ -67,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // TODO: start some background work here
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
+                (String[]) symbolArray.toArray(),
+                (byte)0);
+    }
+
+    public void refresh() {
     }
 
     private void setDefaultFragment() {
@@ -83,16 +97,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: rewrite createInstance
     private void setWatchCurrentStonksFragment() {
+        Log.d("Tag", "set watch current stonks fragment");
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, WatchCurrentStonksFragment.createInstance(),
+                .replace(R.id.frag, watchCurrentStonksFragment,
                         Constants.WATCH_STONKS_TAG)
                 .commit();
+
+        isAttached = true;
     }
 
     private void setManageFavouritesStonksFragment() {
+        Log.d("Tag", "set manage favourites stonks fragment");
+        isAttached = false;
+
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(),
