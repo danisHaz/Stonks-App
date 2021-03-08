@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static ArrayList<String> symbolArray = new ArrayList<String>();
     private static ArrayList<String> prices = new ArrayList<String>();
 
-    public static boolean isAttached = false;
+    public static boolean isCurrentStonksFragmentAttached = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
             this.setDefaultFragment();
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
-                    this, Constants.toStringArray(symbolArray));
         }
 
         // TODO: make some defines of static things
@@ -68,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        // TODO: start some background work here
+        BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
+                this, Constants.toStringArray(symbolArray));
     }
 
     @Override
@@ -78,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
                 (String[]) symbolArray.toArray(),
                 (byte)0);
-    }
-
-    public void refresh() {
     }
 
     private void setDefaultFragment() {
@@ -98,23 +94,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setWatchCurrentStonksFragment() {
-        Log.d("Tag", "set watch current stonks fragment");
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.frag, watchCurrentStonksFragment,
                         Constants.WATCH_STONKS_TAG)
                 .commit();
 
-        isAttached = true;
+        isCurrentStonksFragmentAttached = true;
     }
 
     private void setManageFavouritesStonksFragment() {
-        Log.d("Tag", "set manage favourites stonks fragment");
-        isAttached = false;
+        isCurrentStonksFragmentAttached = false;
 
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(),
+                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(new Bundle()),
                         Constants.MANAGE_YOUR_FAVOURITES_TAG)
                 .commit();
     }

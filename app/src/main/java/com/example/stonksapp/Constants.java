@@ -8,9 +8,6 @@ public class Constants {
     public static final String SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE =
             "{\"type\": \"subscribe\", \"symbol\": \"%s\"}";
 
-    public static final String LAST_PRICE_UPDATES_JSON_TEMPLATE_TEST =
-            "{'type': 'subscribe', 'symbol': '%s'}";
-
     public static final String UNSUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE =
             "{\"type\": \"unsubscribe\", \"symbol\": \"%s\"}";
 

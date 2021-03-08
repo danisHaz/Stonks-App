@@ -117,7 +117,7 @@ public class WebSocketClient {
 
             limit = 0;
 
-            if (!MainActivity.isAttached)
+            if (!MainActivity.isCurrentStonksFragmentAttached)
                 return;
 
             Gson gson = (new GsonBuilder()).create();
