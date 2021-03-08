@@ -17,13 +17,14 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private static boolean isConnectionProvided = true;
 
     private static byte defaultFragment = 0;
-    private static WatchCurrentStonksFragment watchCurrentStonksFragment;
-    private static ManageFavouriteStonksFragment manageFavouriteStonksFragment;
+    private WatchCurrentStonksFragment watchCurrentStonksFragment;
+    private ManageFavouriteStonksFragment manageFavouriteStonksFragment;
     private static ArrayList<String> symbolArray = new ArrayList<String>();
     private static ArrayList<String> prices = new ArrayList<String>();
+
+    public static boolean isAttached = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +36,23 @@ public class MainActivity extends AppCompatActivity {
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
 
-            // HTTP request
-
             HTTPSRequestClient client = new HTTPSRequestClient();
-            StockSymbol[] curArray = client.GET(String.format(Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
+            StockSymbol[] curArray = client.GET(String.format(
+                    Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
 
             for (int pos = 0; pos < 10; pos++) {
                 symbolArray.add(curArray[pos].symbol);
-                prices.add("0.0");
+                prices.add("N/A");
             }
 
-//            symbolArray.add("AAPL");
+            symbolArray.add("AAPL");
+            prices.add("N/A");
 
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("symbolArray", symbolArray);
             bundle.putStringArrayList("priceArray", prices);
-            watchCurrentStonksFragment = WatchCurrentStonksFragment.createInstance(bundle);
+            watchCurrentStonksFragment =
+                    WatchCurrentStonksFragment.createInstance(bundle, this);
 
             this.setDefaultFragment();
 
@@ -78,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
                 (byte)0);
     }
 
+    public void refresh() {
+    }
+
     private void setDefaultFragment() {
         switch (defaultFragment) {
             case 0:
@@ -92,16 +97,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: rewrite createInstance
     private void setWatchCurrentStonksFragment() {
+        Log.d("Tag", "set watch current stonks fragment");
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.frag, watchCurrentStonksFragment,
                         Constants.WATCH_STONKS_TAG)
                 .commit();
+
+        isAttached = true;
     }
 
     private void setManageFavouritesStonksFragment() {
+        Log.d("Tag", "set manage favourites stonks fragment");
+        isAttached = false;
+
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(),

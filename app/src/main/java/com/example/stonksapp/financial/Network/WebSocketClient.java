@@ -1,5 +1,6 @@
 package com.example.stonksapp.financial.Network;
 
+import com.example.stonksapp.UI.Activities.MainActivity;
 import com.example.stonksapp.financial.StockSymbolsArray;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -95,6 +96,7 @@ public class WebSocketClient {
     // class to listen to WebSocket actions
     public class SocketListener extends WebSocketAdapter {
         private String listenerTag = "SocketListenerTag";
+        private int limit = 0;
 
         @Override
         public void onConnected(WebSocket ws, Map<String, List<String>> headers) throws Exception {
@@ -103,9 +105,19 @@ public class WebSocketClient {
 
         @Override
         public void onTextMessage(WebSocket ws, String message) {
-            Log.i("MessageReceived", message);
+//            Log.i("MessageReceived", message);
 
             if (message.equals(Constants.PING_MESSAGE))
+                return;
+
+            if (limit != 30) {
+                limit++;
+                return;
+            }
+
+            limit = 0;
+
+            if (!MainActivity.isAttached)
                 return;
 
             Gson gson = (new GsonBuilder()).create();

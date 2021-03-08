@@ -4,29 +4,29 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.content.Context;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.os.Bundle;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.financial.TradesPrices;
 
 import java.util.ArrayList;
-
+import java.lang.NullPointerException;
 
 public class WatchCurrentStonksFragment extends Fragment {
     private CustomItemAdapter adapter;
-
+    private AppCompatActivity innerContext;
 
     public WatchCurrentStonksFragment() {
         // Required empty public constructor
@@ -39,10 +39,25 @@ public class WatchCurrentStonksFragment extends Fragment {
      *
      * @return
      */
-    public static WatchCurrentStonksFragment createInstance(Bundle bundle) {
+    public static WatchCurrentStonksFragment createInstance(Bundle bundle, AppCompatActivity context) {
         WatchCurrentStonksFragment frag =  new WatchCurrentStonksFragment();
+        frag.innerContext = context;
+
         frag.setArguments(bundle);
         return frag;
+    }
+
+    private void refreshFragment() {
+        FragmentTransaction transaction = innerContext.getSupportFragmentManager().beginTransaction();
+        try {
+            Fragment fragg = innerContext.getSupportFragmentManager().findFragmentByTag(Constants.WATCH_STONKS_TAG);
+            transaction.detach(fragg);
+            transaction.attach(fragg);
+            transaction.commit();
+        } catch (NullPointerException e) {
+            Log.d("Err", "Watch stonks fragment not found");
+            e.printStackTrace();
+        }
     }
 
     public int updateCurrentStonks(TradesPrices prices) {
@@ -50,7 +65,9 @@ public class WatchCurrentStonksFragment extends Fragment {
             String chosenSymbol = adapter.symbolList.get(pos);
             if (prices.data[prices.data.length - 1].symbol.equals(chosenSymbol)) {
                 adapter.priceList.set(pos, prices.data[prices.data.length - 1].lastPrice);
-                adapter.notifyItemChanged(pos);
+
+                refreshFragment();
+
                 return Constants.SUCCESS;
             }
         }

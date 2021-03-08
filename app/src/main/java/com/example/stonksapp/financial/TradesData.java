@@ -17,6 +17,6 @@ public class TradesData {
 
     // ???
     @SerializedName("c")
-    public String conditions;
+    public String[] conditions;
 
 }
