@@ -6,6 +6,7 @@ import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.StockSymbol;
+import com.example.stonksapp.financial.Components.FavouriteStock;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
         BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
                 this, Constants.toStringArray(symbolArray));
+
+        FavouriteStock.defineDB(this);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.example.stonksapp.UI.Fragments;
 
+import com.example.stonksapp.R;
+import com.example.stonksapp.financial.Components.Stock;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.stonksapp.R;
+import java.util.ArrayList;
 
 public class ManageFavouriteStonksFragment extends Fragment {
+    private ArrayList<Stock> stockList;
+    private CustomAdapter adapter;
 
     public ManageFavouriteStonksFragment() {
         // Required empty public constructor
@@ -44,7 +49,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
         RecyclerView recView = (RecyclerView) view;
-
+        adapter = new CustomAdapter(bundle);
     }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
