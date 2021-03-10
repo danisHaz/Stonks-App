@@ -1,5 +1,8 @@
 package com.example.stonksapp.financial.Components;
 
+import com.example.stonksapp.financial.TradesPrices;
+import com.example.stonksapp.financial.TradesData;
+
 import com.google.gson.annotations.SerializedName;
 
 import androidx.annotation.NonNull;
@@ -62,15 +65,21 @@ public class Stock {
     @SerializedName("finnhubIndustry")
     public String finnhubIndustry;
 
-    Stock(@NonNull String symbol, @Nullable String country) {
+    public Stock(@NonNull String symbol, @Nullable String country) {
         this.symbol = symbol;
         this.country = country;
         this.price = "N/A";
     }
 
-    Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
+    public Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
         this.symbol = symbol;
         this.country = country;
         this.price = price;
+    }
+
+    public static Stock from(TradesPrices trades) {
+        TradesData data = trades.data[trades.data.length - 1];
+        Stock newStock = new Stock(data.symbol, null, data.price);
+        return newStock;
     }
 }

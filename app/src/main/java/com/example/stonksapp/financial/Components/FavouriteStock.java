@@ -24,11 +24,21 @@ public class FavouriteStock implements FavouriteObject {
         myDB.insertFavourite(stock);
     }
 
+    public static void updateFavourite(Stock stock) {
+        for (int i = 0; i < currentFavourites.size(); i++) {
+            if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
+                currentFavourites.set(i, stock);
+                myDB.updateFavourite(stock);
+            }
+        }
+    }
+
     public static void deleteFromFavourites(Stock stock) {
         for (int i = 0; i < currentFavourites.size(); i++) {
             Stock currStock  = currentFavourites.get(i);
             if (currStock.symbol.equals(stock.symbol)) {
                 currentFavourites.remove(i);
+                myDB.deleteFromFavourites(currStock);
                 return;
             }
         }

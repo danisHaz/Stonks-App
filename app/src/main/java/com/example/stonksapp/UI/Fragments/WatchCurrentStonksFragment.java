@@ -19,27 +19,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
+import com.example.stonksapp.financial.Components.FavouriteStock;
 import com.example.stonksapp.financial.TradesPrices;
 
 import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class WatchCurrentStonksFragment extends Fragment {
-    private CustomItemAdapter adapter;
     private AppCompatActivity innerContext;
 
     public WatchCurrentStonksFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * @param bundle: Bundle should have:
-     * symbolArray: ArrayList<String>
-     * priceArray: ArrayList<String>
-     *
-     * @return
-     */
-    public static WatchCurrentStonksFragment createInstance(Bundle bundle, AppCompatActivity context) {
+    public static WatchCurrentStonksFragment createInstance(@Nullable Bundle bundle,
+                                                            @NonNull AppCompatActivity context) {
         WatchCurrentStonksFragment frag =  new WatchCurrentStonksFragment();
         frag.innerContext = context;
 
@@ -47,31 +41,20 @@ public class WatchCurrentStonksFragment extends Fragment {
         return frag;
     }
 
-    private void refreshFragment() {
+    public int updateAndRefresh() {
         FragmentTransaction transaction = innerContext.getSupportFragmentManager().beginTransaction();
         try {
-            Fragment fragg = innerContext.getSupportFragmentManager().findFragmentByTag(Constants.WATCH_STONKS_TAG);
+            Fragment fragg = innerContext.getSupportFragmentManager()
+                    .findFragmentByTag(Constants.WATCH_STONKS_TAG);
             transaction.detach(fragg);
             transaction.attach(fragg);
             transaction.commit();
+            return Constants.SUCCESS;
         } catch (NullPointerException e) {
             Log.d("Err", "Watch stonks fragment not found");
             e.printStackTrace();
+            return Constants.FAILURE;
         }
-    }
-
-    public int updateCurrentStonks(TradesPrices prices) {
-        for (int pos = 0; pos < adapter.symbolList.size(); pos++) {
-            String chosenSymbol = adapter.symbolList.get(pos);
-            if (prices.data[prices.data.length - 1].symbol.equals(chosenSymbol)) {
-                adapter.priceList.set(pos, prices.data[prices.data.length - 1].lastPrice);
-
-                refreshFragment();
-
-                return Constants.SUCCESS;
-            }
-        }
-        return Constants.FAILURE;
     }
 
     @Override
@@ -88,9 +71,8 @@ public class WatchCurrentStonksFragment extends Fragment {
                               @Nullable Bundle bundle) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new CustomItemAdapter(getArguments());
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(new CustomItemAdapter(getArguments()));
     }
 
 
@@ -107,18 +89,9 @@ public class WatchCurrentStonksFragment extends Fragment {
 
     private static class CustomItemAdapter extends RecyclerView.Adapter<CustomViewHolder> {
         private int argCount;
-        public ArrayList<String> symbolList;
-        public ArrayList<String> priceList;
 
         CustomItemAdapter(Bundle bundle) {
-            try {
-                symbolList = bundle.getStringArrayList("symbolArray");
-                argCount = symbolList.size();
-                priceList = bundle.getStringArrayList("priceArray");
-            } catch (java.lang.NullPointerException e) {
-                Log.d("Err", "symbolList not provided");
-                e.printStackTrace();
-            }
+            // provide some code
         }
 
         @Override
@@ -131,8 +104,8 @@ public class WatchCurrentStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
-                holder.cell.setText(symbolList.get(pos));
-                holder.priceCell.setText(priceList.get(pos));
+                holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
+                holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();

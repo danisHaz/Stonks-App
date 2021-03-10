@@ -37,7 +37,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
         return fragment;
     }
 
-    public static void updateAndRefresh(@NonNull AppCompatActivity activity) {
+    public int updateAndRefresh(@NonNull AppCompatActivity activity) {
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
@@ -46,9 +46,12 @@ public class ManageFavouriteStonksFragment extends Fragment {
 
             transaction.detach(usedFragment);
             transaction.attach(usedFragment).commit();
+
+            return Constants.SUCCESS;
         } catch (NullPointerException e) {
             Log.e("Err", "Manage Favourites fragment not found");
             e.printStackTrace();
+            return Constants.FAILURE;
         }
 
     }
@@ -91,7 +94,6 @@ public class ManageFavouriteStonksFragment extends Fragment {
 
         CustomAdapter(@Nullable Bundle bundle) {
             argCount = FavouriteStock.currentFavourites.size();
-
         }
 
         @Override

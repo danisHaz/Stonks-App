@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class TradesData {
     @SerializedName("p")
-    public String lastPrice;
+    public String price;
 
     @SerializedName("s")
     public String symbol;

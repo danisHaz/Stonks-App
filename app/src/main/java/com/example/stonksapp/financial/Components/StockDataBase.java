@@ -11,6 +11,7 @@ import androidx.room.Insert;
 import androidx.room.Delete;
 import androidx.room.RoomDatabase;
 import androidx.room.Room;
+import androidx.room.Update;
 
 import android.content.Context;
 
@@ -26,10 +27,11 @@ public class StockDataBase {
     public static StockDataBase createInstance(Context context) {
         StockDataBase dataBase = new StockDataBase();
         dataBase.mDb = Room.databaseBuilder(context, StockDB.class,
-                String.format("%dDataBase", StockDataBase.initializeNumber)).build();
+                String.format("%dDataBase", StockDataBase.initializeNumber++)).build();
         return dataBase;
     }
 
+    // todo: rewrite to more faster algorithm
     public void insertFavourite(final Stock stock) {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -42,13 +44,24 @@ public class StockDataBase {
         thread.start();
     }
 
-    // todo: test this method
     public void deleteFromFavourites(final Stock stock) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public synchronized void run() {
                 StockDao dao = mDb.stockDao();
                 dao.delete(stock);
+            }
+        });
+
+        thread.start();
+    }
+
+    public void updateFavourite(final Stock stock) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                StockDao dao = mDb.stockDao();
+                dao.update(stock);
             }
         });
 
@@ -83,6 +96,9 @@ public class StockDataBase {
 
         @Delete
         void delete(Stock stock);
+
+        @Update
+        void update(Stock stock);
     }
 
     @Database(entities = (Stock.class), version = 1)
