@@ -55,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
             watchCurrentStonksFragment =
                     WatchCurrentStonksFragment.createInstance(bundle, this);
 
+            manageFavouriteStonksFragment =
+                    ManageFavouriteStonksFragment.createInstance(null);
+
             this.setDefaultFragment();
 
         }

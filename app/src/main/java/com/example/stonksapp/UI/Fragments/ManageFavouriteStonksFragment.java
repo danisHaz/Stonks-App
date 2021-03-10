@@ -1,21 +1,27 @@
 package com.example.stonksapp.UI.Fragments;
 
+import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.financial.Components.Stock;
+import com.example.stonksapp.financial.Components.FavouriteStock;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.lang.NullPointerException;
 
 public class ManageFavouriteStonksFragment extends Fragment {
     private ArrayList<Stock> stockList;
@@ -29,6 +35,22 @@ public class ManageFavouriteStonksFragment extends Fragment {
         ManageFavouriteStonksFragment fragment = new ManageFavouriteStonksFragment();
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    public static void updateAndRefresh(@NonNull AppCompatActivity activity) {
+        FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+
+        try {
+            Fragment usedFragment = activity.getSupportFragmentManager()
+                    .findFragmentByTag(Constants.MANAGE_YOUR_FAVOURITES_TAG);
+
+            transaction.detach(usedFragment);
+            transaction.attach(usedFragment).commit();
+        } catch (NullPointerException e) {
+            Log.e("Err", "Manage Favourites fragment not found");
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -50,6 +72,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
         RecyclerView recView = (RecyclerView) view;
         adapter = new CustomAdapter(bundle);
+        recView.setAdapter(adapter);
     }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
@@ -67,12 +90,19 @@ public class ManageFavouriteStonksFragment extends Fragment {
         private int argCount;
 
         CustomAdapter(@Nullable Bundle bundle) {
+            argCount = FavouriteStock.currentFavourites.size();
 
         }
 
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
-
+            try {
+                holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
+                holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
+            } catch (NullPointerException e) {
+                Log.e("Err", "Current favourites is not valid");
+                e.printStackTrace();
+            }
         }
 
         @NonNull

@@ -54,6 +54,9 @@ public class Stock {
     @SerializedName("logo")
     public String logo;
 
+    @ColumnInfo(name="price")
+    public String price;
+
     // ???
     @ColumnInfo(name="finnhubIndustry")
     @SerializedName("finnhubIndustry")
@@ -62,5 +65,12 @@ public class Stock {
     Stock(@NonNull String symbol, @Nullable String country) {
         this.symbol = symbol;
         this.country = country;
+        this.price = "N/A";
+    }
+
+    Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
+        this.symbol = symbol;
+        this.country = country;
+        this.price = price;
     }
 }
