@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
-                (String[]) WatchingStocks.getSymbols().toArray(),
+                Constants.toStringArray(WatchingStocks.getSymbols()),
                 (byte)0);
     }
 

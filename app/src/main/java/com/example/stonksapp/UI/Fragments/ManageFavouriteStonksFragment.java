@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -83,11 +85,13 @@ public class ManageFavouriteStonksFragment extends Fragment {
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
         final TextView priceCell;
+        final CheckBox button;
 
         CustomViewHolder(@NonNull View view) {
             super(view);
             cell = (TextView) view.findViewById(R.id.simpleTextView);
             priceCell = (TextView) view.findViewById(R.id.priceTextView);
+            button = (CheckBox) view.findViewById(R.id.setFavouriteButton);
         }
     }
 
@@ -103,10 +107,25 @@ public class ManageFavouriteStonksFragment extends Fragment {
             try {
                 holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
                 holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
+                holder.button.setChecked(true);
             } catch (NullPointerException e) {
                 Log.e("Err", "Current favourites is not valid");
                 e.printStackTrace();
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("Err", "Wanted position is not valid");
+                e.printStackTrace();
             }
+
+            holder.button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton view, boolean isChecked) {
+                    if (isChecked) {
+                        Log.i("Info", "Stock which was deleted is going to be favourite again");
+                    } else {
+                        // pass code
+                    }
+                }
+            });
         }
 
         @NonNull

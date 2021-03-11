@@ -96,6 +96,7 @@ public class WebSocketClient {
         private String listenerTag = "SocketListenerTag";
         private int limit = 0;
 
+        // todo: all updates should work async
         private void update(String message) {
             if (!MainActivity.attachedFragmentTag.equals(Constants.WATCH_STONKS_TAG))
                 return;

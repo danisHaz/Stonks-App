@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.CheckBox;
 
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -80,11 +82,13 @@ public class WatchCurrentStonksFragment extends Fragment {
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
         final TextView priceCell;
+        final CheckBox button;
 
         CustomViewHolder(@NonNull View v) {
             super(v);
             cell = (TextView) v.findViewById(R.id.simpleTextView);
             priceCell = (TextView) v.findViewById(R.id.priceTextView);
+            button = (CheckBox) v.findViewById(R.id.setFavouriteButton);
         }
     }
 
@@ -108,6 +112,8 @@ public class WatchCurrentStonksFragment extends Fragment {
             try {
                 holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
                 holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
+                holder.button.setChecked(FavouriteStock.isInFavourites(
+                        WatchingStocks.watchingStocks.get(pos)));
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();
@@ -115,6 +121,17 @@ public class WatchCurrentStonksFragment extends Fragment {
                 Log.d("Err", "holder.(price)cell is null");
                 e.printStackTrace();
             }
+
+            holder.button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton view, boolean isChecked) {
+                    if (isChecked) {
+                        FavouriteStock.addToFavourites(WatchingStocks.watchingStocks.get(pos));
+                    } else {
+                        FavouriteStock.deleteFromFavourites(WatchingStocks.watchingStocks.get(pos));
+                    }
+                }
+            });
         }
 
         @Override
