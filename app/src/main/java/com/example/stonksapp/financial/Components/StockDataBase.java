@@ -1,9 +1,5 @@
 package com.example.stonksapp.financial.Components;
 
-import com.example.stonksapp.financial.Components.Stock;
-import com.example.stonksapp.financial.Components.FavouriteStock;
-import com.example.stonksapp.financial.Components.FavouriteObject;
-
 import androidx.room.Database;
 import androidx.room.Dao;
 import androidx.room.Query;
@@ -19,6 +15,7 @@ import java.util.ArrayList;
 import java.lang.Thread;
 import java.lang.NullPointerException;
 import java.lang.Class;
+import java.util.List;
 
 public class StockDataBase {
     private StockDB mDb;
@@ -86,7 +83,7 @@ public class StockDataBase {
     @Dao
     public interface StockDao {
         @Query("SELECT * FROM stock")
-        ArrayList<Stock> getAll();
+        List<Stock> getAll();
 
         @Insert
         void insertAll(Stock... stocks);
@@ -101,7 +98,7 @@ public class StockDataBase {
         void update(Stock stock);
     }
 
-    @Database(entities = (Stock.class), version = 1)
+    @Database(entities = {Stock.class}, version = 1)
     public abstract static class StockDB extends RoomDatabase {
         public abstract StockDao stockDao();
     }

@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                this, (String[]) WatchingStocks.getSymbols().toArray());
+                this, Constants.toStringArray(WatchingStocks.getSymbols()));
 
         FavouriteStock.defineDB(this);
     }

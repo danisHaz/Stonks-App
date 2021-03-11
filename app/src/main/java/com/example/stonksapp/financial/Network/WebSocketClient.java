@@ -137,12 +137,13 @@ public class WebSocketClient {
             if (message.equals(Constants.PING_MESSAGE))
                 return;
 
-            if (limit != 15) {
-                limit++;
-                return;
-            }
+//            if (limit != 15) {
+//                limit++;
+//                return;
+//            }
 
             limit = 0;
+            update(message);
         }
 
         @Override

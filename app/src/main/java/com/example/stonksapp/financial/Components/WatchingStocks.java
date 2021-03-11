@@ -17,6 +17,7 @@ public class WatchingStocks {
         for (int pos = 0; pos < 10; pos++) {
             watchingStocks.add(new Stock(curArray[pos].symbol, "US"));
         }
+        watchingStocks.add(new Stock("AAPL", "US"));
     }
 
     public static ArrayList<String> getSymbols() {

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.financial.Components.FavouriteStock;
+import com.example.stonksapp.financial.Components.WatchingStocks;
 import com.example.stonksapp.financial.TradesPrices;
 
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class WatchCurrentStonksFragment extends Fragment {
 
         CustomItemAdapter(Bundle bundle) {
             // provide some code
+            argCount = WatchingStocks.watchingStocks.size();
         }
 
         @Override
@@ -104,8 +106,8 @@ public class WatchCurrentStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
-                holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
-                holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
+                holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
+                holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();

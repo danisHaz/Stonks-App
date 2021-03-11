@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 
@@ -47,6 +48,7 @@ public class Stock {
 
     @PrimaryKey
     @SerializedName("ticker")
+    @NonNull
     public String symbol;
 
     @ColumnInfo(name="url")
@@ -71,6 +73,7 @@ public class Stock {
         this.price = "N/A";
     }
 
+    @Ignore
     public Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
         this.symbol = symbol;
         this.country = country;
