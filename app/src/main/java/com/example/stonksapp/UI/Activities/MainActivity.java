@@ -4,8 +4,7 @@ import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
-import com.example.stonksapp.financial.Network.HTTPSRequestClient;
-import com.example.stonksapp.financial.StockSymbol;
+import com.example.stonksapp.financial.Components.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -21,10 +20,16 @@ public class MainActivity extends AppCompatActivity {
     private static byte defaultFragment = 0;
     private WatchCurrentStonksFragment watchCurrentStonksFragment;
     private ManageFavouriteStonksFragment manageFavouriteStonksFragment;
-    private static ArrayList<String> symbolArray = new ArrayList<String>();
-    private static ArrayList<String> prices = new ArrayList<String>();
 
-    public static boolean isAttached = false;
+    public WatchCurrentStonksFragment getWatchStonksFragment() {
+        return watchCurrentStonksFragment;
+    }
+
+    public ManageFavouriteStonksFragment getManageFavouriteFragment() {
+        return manageFavouriteStonksFragment;
+    }
+
+    public static String attachedFragmentTag = Constants.WATCH_STONKS_TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,28 +41,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
 
-            HTTPSRequestClient client = new HTTPSRequestClient();
-            StockSymbol[] curArray = client.GET(String.format(
-                    Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
+            WatchingStocks.define();
 
-            for (int pos = 0; pos < 10; pos++) {
-                symbolArray.add(curArray[pos].symbol);
-                prices.add("N/A");
-            }
-
-            symbolArray.add("AAPL");
-            prices.add("N/A");
-
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("symbolArray", symbolArray);
-            bundle.putStringArrayList("priceArray", prices);
             watchCurrentStonksFragment =
-                    WatchCurrentStonksFragment.createInstance(bundle, this);
+                    WatchCurrentStonksFragment.createInstance(null, this);
+
+            manageFavouriteStonksFragment =
+                    ManageFavouriteStonksFragment.createInstance(null);
 
             this.setDefaultFragment();
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(watchCurrentStonksFragment,
-                    this, Constants.toStringArray(symbolArray));
         }
 
         // TODO: make some defines of static things
@@ -68,7 +61,10 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        // TODO: start some background work here
+        BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                this, Constants.toStringArray(WatchingStocks.getSymbols()));
+
+        FavouriteStock.defineDB(this);
     }
 
     @Override
@@ -76,11 +72,8 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
-                (String[]) symbolArray.toArray(),
+                Constants.toStringArray(WatchingStocks.getSymbols()),
                 (byte)0);
-    }
-
-    public void refresh() {
     }
 
     private void setDefaultFragment() {
@@ -98,25 +91,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setWatchCurrentStonksFragment() {
-        Log.d("Tag", "set watch current stonks fragment");
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.frag, watchCurrentStonksFragment,
                         Constants.WATCH_STONKS_TAG)
                 .commit();
 
-        isAttached = true;
+        attachedFragmentTag = Constants.WATCH_STONKS_TAG;
     }
 
     private void setManageFavouritesStonksFragment() {
-        Log.d("Tag", "set manage favourites stonks fragment");
-        isAttached = false;
-
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(),
+                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(new Bundle()),
                         Constants.MANAGE_YOUR_FAVOURITES_TAG)
                 .commit();
+
+        attachedFragmentTag = Constants.MANAGE_YOUR_FAVOURITES_TAG;
     }
 
     public void onWatchCurrentStonksClick(View view) {

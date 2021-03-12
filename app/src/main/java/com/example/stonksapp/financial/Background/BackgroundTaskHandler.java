@@ -1,6 +1,5 @@
 package com.example.stonksapp.financial.Background;
 import com.example.stonksapp.Constants;
-import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 
 import android.util.Log;
 import android.content.ComponentName;
@@ -8,6 +7,8 @@ import android.app.job.JobScheduler;
 import android.app.job.JobInfo;
 import android.content.Context;
 import android.os.PersistableBundle;
+
+import com.example.stonksapp.UI.Activities.MainActivity;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.financial.Network.WebSocketClient;
@@ -20,9 +21,9 @@ public class BackgroundTaskHandler {
         return client;
     }
 
-    private static void createSocketConnection(WatchCurrentStonksFragment fragment) {
+    private static void createSocketConnection(MainActivity activity) {
         client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
-                fragment);
+                activity);
         client.connect();
     }
 
@@ -50,12 +51,12 @@ public class BackgroundTaskHandler {
         }
     }
 
-    public static void subscribeOnLastPriceUpdates(WatchCurrentStonksFragment fragment,
-            Context context, String[] chosenSymbols) {
+    public static void subscribeOnLastPriceUpdates(
+            MainActivity activity, String[] chosenSymbols) {
         if (client == null)
-            createSocketConnection(fragment);
+            createSocketConnection(activity);
 
-        scheduleJob(ChangeCurrentPricesService.class, context,
+        scheduleJob(ChangeCurrentPricesService.class, activity,
                 Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID, chosenSymbols);
     }
 
@@ -67,13 +68,13 @@ public class BackgroundTaskHandler {
             client.disconnect();
     }
 
-    public static void unsubscribeFromLastPriceUpdates(Context context,
+    public static void unsubscribeFromLastPriceUpdates(MainActivity activity,
                                                        String[] chosenSymbols,
                                                        byte socketConnectionStop) {
         if (client == null)
             Log.d("D", "Want to unsubscribe from updates when connection does not exist");
         else {
-            scheduleJob(ChangeCurrentPricesService.class, context,
+            scheduleJob(ChangeCurrentPricesService.class, activity,
                     Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID,
                     chosenSymbols);
 

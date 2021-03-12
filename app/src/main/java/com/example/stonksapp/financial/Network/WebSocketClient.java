@@ -1,17 +1,17 @@
 package com.example.stonksapp.financial.Network;
 
 import com.example.stonksapp.UI.Activities.MainActivity;
-import com.example.stonksapp.financial.StockSymbolsArray;
+import com.example.stonksapp.financial.Components.WatchingStocks;
+import com.example.stonksapp.financial.TradesPrices;
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.financial.Components.Stock;
+import com.example.stonksapp.financial.Components.FavouriteStock;
+
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
-
-import com.example.stonksapp.financial.TradesPrices;
-import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
-import com.example.stonksapp.Constants;
-import com.example.stonksapp.financial.StockSymbol;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
@@ -23,18 +23,16 @@ import java.util.List;
 
 import android.util.Log;
 
-import org.json.JSONException;
-
 public class WebSocketClient {
     private WebSocket socket;
     private String socketUri;
     public final boolean[] isConnected = new boolean[1];
-    private WatchCurrentStonksFragment fragment;
+    private MainActivity activity;
 
-    public WebSocketClient(String uri, WatchCurrentStonksFragment fragment) {
+    public WebSocketClient(String uri, MainActivity activity) {
         socketUri = uri;
         isConnected[0] = false;
-        this.fragment = fragment;
+        this.activity = activity;
     }
 
     private void reconnect() {
@@ -98,6 +96,36 @@ public class WebSocketClient {
         private String listenerTag = "SocketListenerTag";
         private int limit = 0;
 
+        // todo: all updates should work async
+        private void update(String message) {
+            if (!MainActivity.attachedFragmentTag.equals(Constants.WATCH_STONKS_TAG))
+                return;
+
+            Gson gson = (new GsonBuilder()).create();
+
+            try {
+                Stock stock = Stock.from(gson.fromJson(message, TradesPrices.class));
+
+                int resultId;
+                if (MainActivity.attachedFragmentTag.equals(Constants.WATCH_STONKS_TAG)) {
+                    WatchingStocks.update(stock);
+                    resultId = activity.getWatchStonksFragment().updateAndRefresh();
+                } else {
+                    FavouriteStock.updateFavourite(stock);
+                    resultId = activity.getManageFavouriteFragment().updateAndRefresh(activity);
+                }
+
+                if (resultId == Constants.SUCCESS) {
+                    Log.d("Socket Updater", "update success");
+                } else {
+                    Log.d("Socket Updater", "update failure");
+                }
+            } catch (JsonSyntaxException e) {
+                Log.d("Err", "Provided class for JSON is not valid");
+                e.printStackTrace();
+            }
+        }
+
         @Override
         public void onConnected(WebSocket ws, Map<String, List<String>> headers) throws Exception {
             super.onConnected(ws, headers);
@@ -110,31 +138,13 @@ public class WebSocketClient {
             if (message.equals(Constants.PING_MESSAGE))
                 return;
 
-            if (limit != 30) {
-                limit++;
-                return;
-            }
+//            if (limit != 15) {
+//                limit++;
+//                return;
+//            }
 
             limit = 0;
-
-            if (!MainActivity.isAttached)
-                return;
-
-            Gson gson = (new GsonBuilder()).create();
-
-            try {
-                TradesPrices curPrices = gson.fromJson(message, TradesPrices.class);
-                int resultId = fragment.updateCurrentStonks(curPrices);
-                if (resultId == Constants.SUCCESS) {
-                    Log.d("Socket Updater", "update success");
-                } else {
-                    Log.d("Socket Updater", "update failure");
-                }
-            } catch (JsonSyntaxException e) {
-                Log.d("Err", "Provided class for JSON is not valid");
-                e.printStackTrace();
-            }
-
+            update(message);
         }
 
         @Override

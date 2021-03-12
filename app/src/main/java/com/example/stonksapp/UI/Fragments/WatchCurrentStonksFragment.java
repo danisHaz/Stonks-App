@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.CheckBox;
 
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,27 +21,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
+import com.example.stonksapp.financial.Components.FavouriteStock;
+import com.example.stonksapp.financial.Components.WatchingStocks;
 import com.example.stonksapp.financial.TradesPrices;
 
 import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class WatchCurrentStonksFragment extends Fragment {
-    private CustomItemAdapter adapter;
     private AppCompatActivity innerContext;
 
     public WatchCurrentStonksFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * @param bundle: Bundle should have:
-     * symbolArray: ArrayList<String>
-     * priceArray: ArrayList<String>
-     *
-     * @return
-     */
-    public static WatchCurrentStonksFragment createInstance(Bundle bundle, AppCompatActivity context) {
+    public static WatchCurrentStonksFragment createInstance(@Nullable Bundle bundle,
+                                                            @NonNull AppCompatActivity context) {
         WatchCurrentStonksFragment frag =  new WatchCurrentStonksFragment();
         frag.innerContext = context;
 
@@ -47,37 +44,26 @@ public class WatchCurrentStonksFragment extends Fragment {
         return frag;
     }
 
-    private void refreshFragment() {
+    public int updateAndRefresh() {
         FragmentTransaction transaction = innerContext.getSupportFragmentManager().beginTransaction();
         try {
-            Fragment fragg = innerContext.getSupportFragmentManager().findFragmentByTag(Constants.WATCH_STONKS_TAG);
+            Fragment fragg = innerContext.getSupportFragmentManager()
+                    .findFragmentByTag(Constants.WATCH_STONKS_TAG);
             transaction.detach(fragg);
             transaction.attach(fragg);
             transaction.commit();
+            return Constants.SUCCESS;
         } catch (NullPointerException e) {
             Log.d("Err", "Watch stonks fragment not found");
             e.printStackTrace();
+            return Constants.FAILURE;
         }
-    }
-
-    public int updateCurrentStonks(TradesPrices prices) {
-        for (int pos = 0; pos < adapter.symbolList.size(); pos++) {
-            String chosenSymbol = adapter.symbolList.get(pos);
-            if (prices.data[prices.data.length - 1].symbol.equals(chosenSymbol)) {
-                adapter.priceList.set(pos, prices.data[prices.data.length - 1].lastPrice);
-
-                refreshFragment();
-
-                return Constants.SUCCESS;
-            }
-        }
-        return Constants.FAILURE;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_watch_current_stonks, container,
                 false);
     }
@@ -88,37 +74,29 @@ public class WatchCurrentStonksFragment extends Fragment {
                               @Nullable Bundle bundle) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new CustomItemAdapter(getArguments());
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(new CustomItemAdapter(getArguments()));
     }
-
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
         final TextView priceCell;
+        final CheckBox button;
 
         CustomViewHolder(@NonNull View v) {
             super(v);
             cell = (TextView) v.findViewById(R.id.simpleTextView);
             priceCell = (TextView) v.findViewById(R.id.priceTextView);
+            button = (CheckBox) v.findViewById(R.id.setFavouriteButton);
         }
     }
 
     private static class CustomItemAdapter extends RecyclerView.Adapter<CustomViewHolder> {
         private int argCount;
-        public ArrayList<String> symbolList;
-        public ArrayList<String> priceList;
 
         CustomItemAdapter(Bundle bundle) {
-            try {
-                symbolList = bundle.getStringArrayList("symbolArray");
-                argCount = symbolList.size();
-                priceList = bundle.getStringArrayList("priceArray");
-            } catch (java.lang.NullPointerException e) {
-                Log.d("Err", "symbolList not provided");
-                e.printStackTrace();
-            }
+            // provide some code
+            argCount = WatchingStocks.watchingStocks.size();
         }
 
         @Override
@@ -131,8 +109,10 @@ public class WatchCurrentStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
-                holder.cell.setText(symbolList.get(pos));
-                holder.priceCell.setText(priceList.get(pos));
+                holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
+                holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
+                holder.button.setChecked(FavouriteStock.isInFavourites(
+                        WatchingStocks.watchingStocks.get(pos)) != -1);
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();
@@ -140,6 +120,17 @@ public class WatchCurrentStonksFragment extends Fragment {
                 Log.d("Err", "holder.(price)cell is null");
                 e.printStackTrace();
             }
+
+            holder.button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton view, boolean isChecked) {
+                    if (isChecked) {
+                        FavouriteStock.addToFavourites(WatchingStocks.watchingStocks.get(pos));
+                    } else {
+                        FavouriteStock.deleteFromFavourites(WatchingStocks.watchingStocks.get(pos));
+                    }
+                }
+            });
         }
 
         @Override
