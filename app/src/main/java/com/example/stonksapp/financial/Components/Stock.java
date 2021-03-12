@@ -12,8 +12,10 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 
+import java.lang.Comparable;
+
 @Entity
-public class Stock {
+public class Stock implements Comparable<Stock> {
     @ColumnInfo(name="country")
     @SerializedName("country")
     public String country;
@@ -84,5 +86,9 @@ public class Stock {
         TradesData data = trades.data[trades.data.length - 1];
         Stock newStock = new Stock(data.symbol, null, data.price);
         return newStock;
+    }
+
+    public int compareTo(Stock newStock) {
+        return this.symbol.compareTo(newStock.symbol);
     }
 }

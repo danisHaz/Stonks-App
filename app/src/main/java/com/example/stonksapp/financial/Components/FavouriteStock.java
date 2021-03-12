@@ -6,24 +6,41 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class FavouriteStock implements FavouriteObject {
     private static StockDataBase myDB;
     public static boolean isDefined = false;
     public static List<Stock> currentFavourites = Arrays.asList(new Stock("AAPL", "US"));
+    private static TreeSet<Stock> delayedDelete = new TreeSet<>();
 
     @Override
     public void setFavourite() {
         // add favourite stock
     }
 
-    public static boolean isInFavourites(Stock stock) {
+    public static void setFavouriteDelayDeleted(int pos) {
+        delayedDelete.add(currentFavourites.get(pos));
+    }
+
+    public static void deleteAllDelayed() {
+        for (Stock stock: delayedDelete) {
+            deleteFromFavourites(stock);
+        }
+        delayedDelete.clear();
+    }
+
+    public static void cancelDeletion(int pos) {
+        delayedDelete.remove(currentFavourites.get(pos));
+    }
+
+    public static int isInFavourites(Stock stock) {
         for (int i = 0; i < currentFavourites.size(); i++) {
             if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
     public static void addToFavourites(Stock stock) {

@@ -78,7 +78,6 @@ public class WatchCurrentStonksFragment extends Fragment {
         recyclerView.setAdapter(new CustomItemAdapter(getArguments()));
     }
 
-
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
         final TextView priceCell;
@@ -113,7 +112,7 @@ public class WatchCurrentStonksFragment extends Fragment {
                 holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
                 holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
                 holder.button.setChecked(FavouriteStock.isInFavourites(
-                        WatchingStocks.watchingStocks.get(pos)));
+                        WatchingStocks.watchingStocks.get(pos)) != -1);
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();

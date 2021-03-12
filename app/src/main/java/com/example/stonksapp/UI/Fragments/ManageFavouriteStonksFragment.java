@@ -82,6 +82,13 @@ public class ManageFavouriteStonksFragment extends Fragment {
         recView.setAdapter(adapter);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        FavouriteStock.deleteAllDelayed();
+    }
+
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
         final TextView priceCell;
@@ -121,8 +128,9 @@ public class ManageFavouriteStonksFragment extends Fragment {
                 public void onCheckedChanged(CompoundButton view, boolean isChecked) {
                     if (isChecked) {
                         Log.i("Info", "Stock which was deleted is going to be favourite again");
+                        FavouriteStock.cancelDeletion(pos);
                     } else {
-                        // pass code
+                        FavouriteStock.setFavouriteDelayDeleted(pos);
                     }
                 }
             });
