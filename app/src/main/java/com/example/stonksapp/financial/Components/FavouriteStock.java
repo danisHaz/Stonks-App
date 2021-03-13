@@ -11,7 +11,7 @@ import java.util.TreeSet;
 public class FavouriteStock implements FavouriteObject {
     private static StockDataBase myDB;
     public static boolean isDefined = false;
-    public static List<Stock> currentFavourites = Arrays.asList(new Stock("AAPL", "US"));
+    public static List<Stock> currentFavourites;
     private static TreeSet<Stock> delayedDelete = new TreeSet<>();
 
     @Override
@@ -62,6 +62,8 @@ public class FavouriteStock implements FavouriteObject {
                 myDB.updateFavourite(stock);
             }
         }
+
+        Log.e("Err", "Unable to find and update stock");
     }
 
     public static void deleteFromFavourites(Stock stock) {

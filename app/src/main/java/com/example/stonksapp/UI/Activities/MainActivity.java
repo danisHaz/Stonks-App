@@ -1,4 +1,5 @@
 package com.example.stonksapp.UI.Activities;
+
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
@@ -8,12 +9,16 @@ import com.example.stonksapp.financial.Components.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.SearchView;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
+import android.view.MenuItem;
 import android.util.Log;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(properContentView);
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
-
             WatchingStocks.define();
 
             watchCurrentStonksFragment =
@@ -50,10 +54,14 @@ public class MainActivity extends AppCompatActivity {
                     ManageFavouriteStonksFragment.createInstance(null);
 
             this.setDefaultFragment();
+            Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+            setSupportActionBar(mToolbar);
 
+//            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+//                    this, Constants.toStringArray(WatchingStocks.getSymbols()));
+
+            FavouriteStock.defineDB(this);
         }
-
-        // TODO: make some defines of static things
 
     }
 
@@ -61,10 +69,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                this, Constants.toStringArray(WatchingStocks.getSymbols()));
-
-        FavouriteStock.defineDB(this);
     }
 
     @Override
@@ -74,6 +78,35 @@ public class MainActivity extends AppCompatActivity {
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
                 Constants.toStringArray(WatchingStocks.getSymbols()),
                 (byte)0);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem item = menu.findItem(R.id.searchView);
+        SearchView searchView = (SearchView) item.getActionView();
+        searchView.setIconified(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(
+                        MainActivity.this, SearchableActivity.class);
+
+                intent.putExtra("query", query);
+                intent.setAction(Intent.ACTION_SEARCH);
+                startActivity(intent);
+                Log.d("DD", "Activity started");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     private void setDefaultFragment() {

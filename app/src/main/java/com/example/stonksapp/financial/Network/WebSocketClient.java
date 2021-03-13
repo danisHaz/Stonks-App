@@ -111,6 +111,7 @@ public class WebSocketClient {
                     WatchingStocks.update(stock);
                     resultId = activity.getWatchStonksFragment().updateAndRefresh();
                 } else {
+                    Log.d("log", "Update Favourite");
                     FavouriteStock.updateFavourite(stock);
                     resultId = activity.getManageFavouriteFragment().updateAndRefresh(activity);
                 }

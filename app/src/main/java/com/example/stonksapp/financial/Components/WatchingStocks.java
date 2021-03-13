@@ -10,8 +10,8 @@ public class WatchingStocks {
     public static ArrayList<Stock> watchingStocks = new ArrayList<>();
 
     public static void define() {
-        HTTPSRequestClient client = new HTTPSRequestClient();
-        StockSymbol[] curArray = client.GET(String.format(
+        HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
+        StockSymbol[] curArray = client.StockSymbols(String.format(
                 Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
 
         for (int pos = 0; pos < 10; pos++) {
