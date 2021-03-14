@@ -10,13 +10,16 @@ public class WatchingStocks {
     public static ArrayList<Stock> watchingStocks = new ArrayList<>();
 
     public static void define() {
-        HTTPSRequestClient client = new HTTPSRequestClient();
-        StockSymbol[] curArray = client.GET(String.format(
-                Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
+//        HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
+//        StockSymbol[] curArray = client.StockSymbols(String.format(
+//                Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
+//
+//        for (int pos = 0; pos < 10; pos++) {
+//            watchingStocks.add(new Stock(curArray[pos].symbol, "US"));
+//        }
 
-        for (int pos = 0; pos < 10; pos++) {
-            watchingStocks.add(new Stock(curArray[pos].symbol, "US"));
-        }
+        watchingStocks.add(new Stock("GOOGL", "US"));
+        watchingStocks.add(new Stock("AMZN", "US"));
         watchingStocks.add(new Stock("AAPL", "US"));
     }
 

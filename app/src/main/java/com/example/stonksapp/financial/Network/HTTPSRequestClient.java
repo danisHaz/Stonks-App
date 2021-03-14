@@ -1,5 +1,6 @@
 package com.example.stonksapp.financial.Network;
 
+import com.example.stonksapp.financial.Components.SymbolQuery;
 import com.example.stonksapp.financial.StockSymbolsArray;
 import com.example.stonksapp.financial.StockSymbol;
 
@@ -21,61 +22,125 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HTTPSRequestClient {
 
-    public StockSymbol[] GET(final String url) {
-        final StockSymbolsArray[] finalArr = new StockSymbolsArray[1];
+    public static class GET {
+        private BufferedReader getJSONinString(String url) {
+            BufferedReader reader = null;
+            try {
+                URL obj = new URL(url);
+                HttpsURLConnection connection =
+                        (HttpsURLConnection) obj.openConnection();
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL obj = new URL(url);
-                    HttpsURLConnection connection =
-                            (HttpsURLConnection) obj.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                connection.setRequestProperty("Content-Type", "application/json");
 
-                    connection.setRequestMethod("GET");
-                    connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-                    connection.setRequestProperty("Content-Type", "application/json");
-
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream()));
-
-                    String jsonMessage = "{\"type\": ";
-                    String str;
-
-                    while ((str = reader.readLine()) != null) {
-                        jsonMessage += str;
-                    }
-                    reader.close();
-
-                    jsonMessage += "}";
-
-                    Gson gson = (new GsonBuilder()).create();
-
-                    finalArr[0] =
-                            gson.fromJson(jsonMessage, StockSymbolsArray.class);
-
-                } catch (MalformedURLException e) {
-                    Log.d("Err", "Provided wrong URL in GET");
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    Log.d("Err", "IOException occurred in GET");
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    Log.d("Err", "json format is wrong");
-                    e.printStackTrace();
-                }
+                reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
 
-        thread.start();
+            if (reader == null)
+                Log.e("Err", "Connection failed");
 
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            return reader;
         }
 
-        return finalArr[0].arr;
+        public StockSymbol[] StockSymbols(final String url) {
+            final StockSymbolsArray[] finalArr = new StockSymbolsArray[1];
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        BufferedReader reader = getJSONinString(url);
+                        if (reader == null)
+                            return;
+
+                        String jsonMessage = "{\"type\": ";
+                        String str;
+
+                        while ((str = reader.readLine()) != null) {
+                            jsonMessage += str;
+                        }
+                        reader.close();
+
+                        jsonMessage += "}";
+
+                        Gson gson = (new GsonBuilder()).create();
+
+                        finalArr[0] =
+                                gson.fromJson(jsonMessage, StockSymbolsArray.class);
+
+                    } catch (MalformedURLException e) {
+                        Log.d("Err", "Provided wrong URL in stock symbols");
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.d("Err", "IOException occurred in stock symbols");
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        Log.d("Err", "json format is wrong");
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return finalArr[0].arr;
+        }
+
+        public SymbolQuery symbolLookup(final String url) {
+            final SymbolQuery[] res = new SymbolQuery[1];
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        BufferedReader reader = getJSONinString(url);
+                        if (reader == null)
+                            return;
+
+                        String jsonMessage = "";
+                        String str;
+
+                        while ((str = reader.readLine()) != null) {
+                            jsonMessage += str;
+                        }
+                        reader.close();
+
+                        Gson gson = (new GsonBuilder()).create();
+
+                        res[0] = gson.fromJson(jsonMessage, SymbolQuery.class);
+
+                    } catch (MalformedURLException e) {
+                        Log.d("Err", "Provided wrong URL in symbol lookup");
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.d("Err", "IOException occurred in symbol lookup");
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        Log.d("Err", "json format is wrong");
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return res[0];
+        }
     }
 
 }

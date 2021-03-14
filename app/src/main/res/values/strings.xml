@@ -1,9 +1,19 @@
 <resources>
-    <string name="app_name">Stonks App</string>
+    <string name="appName">Stonks App</string>
+
     <string name="currentStonks">Current Stonks</string>
+
     <string name="favourites">Favourites</string>
+
     <string name="helloThere">Hello there</string>
+
     <string name="defaultFavouriteTitle">Your favourites:</string>
+
     <string name="noInternetConnection">No Internet Connection</string>
+
     <string name="tryAgain">Please try again later</string>
+
+    <string name="searchViewTitle">Find stock</string>
+
+    <string name="yourResults">Found results:</string>
 </resources>

@@ -8,13 +8,16 @@
     android:orientation="vertical"
     tools:context=".UI.Activities.MainActivity">
 
+    <include
+        layout="@layout/toolbar_main"/>
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/frag"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/inner_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/inner_layout"

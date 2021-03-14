@@ -14,6 +14,9 @@ public class Constants {
     public static final String GET_STOCK_SYMBOLS_TEMPLATE =
             "https://finnhub.io/api/v1/stock/symbol?exchange=%s&token=%s";
 
+    public static final String GET_SYMBOL_LOOKUP_TEMPLATE =
+            "https://finnhub.io/api/v1/search?q=%s&token=%s";
+
     public static final byte SUBSCRIBE_LAST_PRICE_UPDATES_ID = 0;
     public static final byte UNSUBSCRIBE_LAST_PRICE_UPDATES_ID = 1;
     public static final String CHOSEN_SYMBOLS = "chosenSymbols";

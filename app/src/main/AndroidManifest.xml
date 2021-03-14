@@ -8,11 +8,28 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/appName"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <provider
+            android:name=".UI.Components.SuggestionsContentProvider"
+            android:authorities="com.example.stonksapp.mContentProvider"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <activity
+            android:name=".UI.Activities.SearchableActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity android:name=".UI.Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,10 +40,9 @@
 
         <service
             android:name=".financial.Background.ChangeCurrentPricesService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
             android:enabled="true"
             android:exported="false"
-            />
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
