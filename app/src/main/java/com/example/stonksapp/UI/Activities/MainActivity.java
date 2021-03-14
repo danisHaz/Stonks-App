@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_SEARCH);
                 startActivity(intent);
                 Log.d("DD", "Activity started");
-                return false;
+                return true;
             }
 
             @Override

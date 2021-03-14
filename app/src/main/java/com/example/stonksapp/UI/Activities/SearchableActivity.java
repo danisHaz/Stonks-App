@@ -58,7 +58,6 @@ public class SearchableActivity extends AppCompatActivity {
             }
 
             ((TextView) findViewById(R.id.yourListView)).setText(R.string.yourResults);
-            listView.setAdapter(mAdapter);
 
             listView.setOnItemClickListener(new ListView.OnItemClickListener() {
                 @Override
@@ -71,6 +70,7 @@ public class SearchableActivity extends AppCompatActivity {
 
                 }
             });
+            listView.setAdapter(mAdapter);
 
         } else {
             Log.e("Err", "Wrong query to SearchableActivity");
