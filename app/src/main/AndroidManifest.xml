@@ -13,14 +13,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".UI.Activities.SearchableActivity">
+        <provider
+            android:name=".UI.Components.SuggestionsContentProvider"
+            android:authorities="com.example.stonksapp.mContentProvider"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <activity
+            android:name=".UI.Activities.SearchableActivity"
+            android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".UI.Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

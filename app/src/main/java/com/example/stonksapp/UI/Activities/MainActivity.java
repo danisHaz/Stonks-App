@@ -13,7 +13,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.widget.SearchView;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -57,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
             setSupportActionBar(mToolbar);
 
-//            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-//                    this, Constants.toStringArray(WatchingStocks.getSymbols()));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                    this, Constants.toStringArray(WatchingStocks.getSymbols()));
 
             FavouriteStock.defineDB(this);
         }
@@ -86,25 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.searchView);
         SearchView searchView = (SearchView) item.getActionView();
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setIconified(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(
-                        MainActivity.this, SearchableActivity.class);
-
-                intent.putExtra("query", query);
-                intent.setAction(Intent.ACTION_SEARCH);
-                startActivity(intent);
-                Log.d("DD", "Activity started");
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
+        searchView.setSearchableInfo(manager.getSearchableInfo(new ComponentName(
+                this, SearchableActivity.class)));
 
         return super.onCreateOptionsMenu(menu);
     }

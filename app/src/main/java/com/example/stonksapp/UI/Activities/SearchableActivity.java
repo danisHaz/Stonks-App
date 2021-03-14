@@ -29,9 +29,9 @@ public class SearchableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable);
 
-        Intent intent = getIntent();
+        Log.d("DEbuG", "Eboyyy");
 
-        Log.d("deb", "searchable activity created");
+        Intent intent = getIntent();
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -51,7 +51,6 @@ public class SearchableActivity extends AppCompatActivity {
 
             ListView listView  = (ListView) findViewById(R.id.searchableView);
             if (mAdapter.isEmpty()) {
-                Log.d("qwe", "shit");
                 mAdapter.add(getResources().getString(R.string.helloThere));
                 listView.setAdapter(mAdapter);
                 return;
@@ -63,7 +62,6 @@ public class SearchableActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adap, View view, int pos, long id) {
                     String mSymbol = (String) adap.getItemAtPosition(pos);
-                    Log.d("Debug", mSymbol);
                     FavouriteStock.addToFavourites(new Stock(mSymbol, "US"));
                     Toast.makeText(SearchableActivity.this, String.format(
                             "%s added to favourites", mSymbol), Toast.LENGTH_LONG).show();
@@ -72,6 +70,19 @@ public class SearchableActivity extends AppCompatActivity {
             });
             listView.setAdapter(mAdapter);
 
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            String tup = "AAPL";
+            try {
+                tup = intent.getDataString();
+            } catch (java.lang.IllegalStateException e) {
+                Log.d("Err", "jopa");
+            }
+            if (tup == null) {
+                Log.e("Err", "Chosen suggestion provided null symbol");
+                finish();
+            }
+            FavouriteStock.addToFavourites(new Stock(tup, "US"));
+            finish();
         } else {
             Log.e("Err", "Wrong query to SearchableActivity");
             onDestroy();

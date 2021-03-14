@@ -2,6 +2,8 @@
 <searchable
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/appName"
-    android:hint="@string/searchViewTitle">
+    android:hint="@string/searchViewTitle"
+    android:searchSuggestAuthority="com.example.stonksapp.mContentProvider"
+    android:searchSuggestIntentAction="android.intent.action.VIEW">
 
 </searchable>
