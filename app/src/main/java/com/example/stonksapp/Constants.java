@@ -24,6 +24,8 @@ public class Constants {
     public static final int SUCCESS = 116;
     public static final int FAILURE = 777;
     public static final String PING_MESSAGE = "{\"type\":\"ping\"}";
+    public static final int CURRENT_CLASS_IS_FAVOURITE = 112;
+    public static final int CURRENT_CLASS_IS_WATCHING = 123;
 
     public static boolean isNetworkConnectionProvided(android.content.Context context) {
         android.net.ConnectivityManager manager =

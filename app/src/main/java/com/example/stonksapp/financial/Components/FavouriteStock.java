@@ -3,9 +3,12 @@ package com.example.stonksapp.financial.Components;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.Arrays;
-import java.util.List;
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.financial.Network.WebSocketClient;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class FavouriteStock implements FavouriteObject {
@@ -13,10 +16,39 @@ public class FavouriteStock implements FavouriteObject {
     public static boolean isDefined = false;
     public static List<Stock> currentFavourites;
     private static TreeSet<Stock> delayedDelete = new TreeSet<>();
+    private static WebSocketClient client;
+    private static MainActivity activity;
 
     @Override
     public void setFavourite() {
         // add favourite stock
+    }
+
+    public static void createSocketConnection() {
+        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
+                activity);
+        client.connect();
+    }
+
+    private static void destroySocketConnection() {
+        client.disconnect();
+    }
+
+    public static void destroy() {
+        destroySocketConnection();
+        client = null;
+    }
+
+    public static WebSocketClient getClient() { return client; }
+
+    public static ArrayList<String> getSymbols() {
+        ArrayList<String> symbolsList = new ArrayList<>();
+
+        for (Stock stock: currentFavourites) {
+            symbolsList.add(stock.symbol);
+        }
+
+        return symbolsList;
     }
 
     public static void setFavouriteDelayDeleted(int pos) {
@@ -60,6 +92,7 @@ public class FavouriteStock implements FavouriteObject {
             if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
                 currentFavourites.set(i, stock);
                 myDB.updateFavourite(stock);
+                return;
             }
         }
 
@@ -79,9 +112,11 @@ public class FavouriteStock implements FavouriteObject {
         Log.e("Err", "Attempt to delete element from favourites that not exist");
     }
 
-    public static void defineDB(Context context) {
-        myDB = StockDataBase.createInstance(context);
+    public static void defineDB(MainActivity activity) {
+        myDB = StockDataBase.createInstance(activity);
         myDB.getAll(FavouriteStock.class);
+
+        createSocketConnection();
 
         isDefined = true;
     }

@@ -14,25 +14,14 @@ import com.example.stonksapp.Constants;
 import com.example.stonksapp.financial.Network.WebSocketClient;
 
 public class BackgroundTaskHandler {
-    private static WebSocketClient client;
     private static int currJobNum = 0;
-
-    public static WebSocketClient getClient() {
-        return client;
-    }
-
-    private static void createSocketConnection(MainActivity activity) {
-        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
-                activity);
-        client.connect();
-    }
 
     private static void scheduleJob(Class<? extends android.app.job.JobService> cls,
                                     Context context,
-                                    byte taskId, String[] chosenSymbols) {
+                                    byte taskId, int currentClass) {
         PersistableBundle bundle = new PersistableBundle();
         bundle.putInt("taskId", taskId);
-        bundle.putStringArray(Constants.CHOSEN_SYMBOLS, chosenSymbols);
+        bundle.putInt("currentClass", currentClass);
 
         ComponentName componentName = new ComponentName(context, cls);
         JobInfo.Builder builder = new JobInfo.Builder(currJobNum++, componentName)
@@ -52,34 +41,17 @@ public class BackgroundTaskHandler {
     }
 
     public static void subscribeOnLastPriceUpdates(
-            MainActivity activity, String[] chosenSymbols) {
-        if (client == null)
-            createSocketConnection(activity);
+            MainActivity activity, int currentClass) {
+        // some additional definitions
 
         scheduleJob(ChangeCurrentPricesService.class, activity,
-                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID, chosenSymbols);
-    }
-
-    @Deprecated
-    public static void unsubscribeFromLastPriceUpdates() {
-        if (client == null)
-            Log.d("D", "Want to unsubscribe from updates when connection does not exist");
-        else
-            client.disconnect();
+                Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID, currentClass);
     }
 
     public static void unsubscribeFromLastPriceUpdates(MainActivity activity,
-                                                       String[] chosenSymbols,
-                                                       byte socketConnectionStop) {
-        if (client == null)
-            Log.d("D", "Want to unsubscribe from updates when connection does not exist");
-        else {
-            scheduleJob(ChangeCurrentPricesService.class, activity,
-                    Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID,
-                    chosenSymbols);
-
-            if (socketConnectionStop == 1)
-                client.disconnect();
-        }
+                                                       int currentClass) {
+        scheduleJob(ChangeCurrentPricesService.class, activity,
+                Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID, currentClass);
     }
+
 }

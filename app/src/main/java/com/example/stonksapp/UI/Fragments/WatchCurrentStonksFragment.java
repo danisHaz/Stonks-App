@@ -45,6 +45,7 @@ public class WatchCurrentStonksFragment extends Fragment {
     }
 
     public int updateAndRefresh() {
+        Log.d("Current", "Trying to update");
         FragmentTransaction transaction = innerContext.getSupportFragmentManager().beginTransaction();
         try {
             Fragment fragg = innerContext.getSupportFragmentManager()
