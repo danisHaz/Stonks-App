@@ -112,9 +112,13 @@ public class FavouriteStock implements FavouriteObject {
         Log.e("Err", "Attempt to delete element from favourites that not exist");
     }
 
-    public static void defineDB(MainActivity activity) {
-        myDB = StockDataBase.createInstance(activity);
+    public static void defineDB(MainActivity mActivity) {
+        if (isDefined)
+            return;
+
+        myDB = StockDataBase.createInstance(mActivity);
         myDB.getAll(FavouriteStock.class);
+        activity = mActivity;
 
         createSocketConnection();
 

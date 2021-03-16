@@ -22,6 +22,16 @@ public class CustomMatrixCursor {
         SymbolQuery resultQuery = client.symbolLookup(String.format(
                 Constants.GET_SYMBOL_LOOKUP_TEMPLATE, query, Constants.API_TOKEN));
 
+        String[] columnNames = new String[3];
+        columnNames[0] = "_id";
+        columnNames[1] = "suggest_text_1";
+        columnNames[2] = "suggest_intent_data";
+
+        MatrixCursor cursor = new MatrixCursor(columnNames);
+
+        if (resultQuery == null)
+            return cursor;
+
         String[] symbolResult = resultQuery
                 .getArrayOf(SymbolQuery.SYMBOL_TYPE);
 
@@ -36,13 +46,6 @@ public class CustomMatrixCursor {
             res[pos][2] = symbolResult[pos];
             pos++;
         }
-
-        String[] columnNames = new String[3];
-        columnNames[0] = "_id";
-        columnNames[1] = "suggest_text_1";
-        columnNames[2] = "suggest_intent_data";
-
-        MatrixCursor cursor = new MatrixCursor(columnNames);
 
         for (int i = 0; i < java.lang.Math.min(symbolResult.length, 3); i++) {
             cursor.addRow(res[i]);

@@ -111,7 +111,6 @@ public class WebSocketClient {
                 } else {
                     FavouriteStock.updateFavourite(stock);
                     resultId = activity.getManageFavouriteFragment().updateAndRefresh();
-                    Log.d("Tag", "After");
                 }
 
                 if (resultId == Constants.SUCCESS) {

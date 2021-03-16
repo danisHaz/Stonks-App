@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class ManageFavouriteStonksFragment extends Fragment {
-    private ArrayList<Stock> stockList;
     private CustomAdapter adapter;
     private AppCompatActivity activity;
 
