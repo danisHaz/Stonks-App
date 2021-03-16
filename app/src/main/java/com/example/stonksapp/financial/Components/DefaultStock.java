@@ -1,21 +1,15 @@
 package com.example.stonksapp.financial.Components;
 
-import com.example.stonksapp.financial.TradesPrices;
-import com.example.stonksapp.financial.TradesData;
-
-import com.google.gson.annotations.SerializedName;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import androidx.room.ColumnInfo;
 
-import java.lang.Comparable;
+import com.google.gson.annotations.SerializedName;
 
 @Entity
-public class Stock implements Comparable<Stock> {
+public class DefaultStock {
     @ColumnInfo(name="country")
     @SerializedName("country")
     public String country;
@@ -69,32 +63,9 @@ public class Stock implements Comparable<Stock> {
     @SerializedName("finnhubIndustry")
     public String finnhubIndustry;
 
-    public Stock(@NonNull String symbol, @Nullable String country) {
-        this.symbol = symbol;
-        this.country = country;
-        this.price = "N/A";
-    }
-
     @Ignore
-    private Stock() { }
-
-    @Ignore
-    public Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
-        this.symbol = symbol;
-        this.country = country;
-        this.price = price;
-    }
-
-    @Ignore
-    public static Stock from(TradesPrices trades) {
-        TradesData data = trades.data[trades.data.length - 1];
-        Stock newStock = new Stock(data.symbol, null, data.price);
-        return newStock;
-    }
-
-    @Ignore
-    public static Stock from(DefaultStock stock) {
-        Stock defStock = new Stock();
+    public static DefaultStock from(Stock stock) {
+        DefaultStock defStock = new DefaultStock();
         defStock.capitalization = stock.capitalization;
         defStock.country = stock.country;
         defStock.currency = stock.currency;
@@ -113,7 +84,11 @@ public class Stock implements Comparable<Stock> {
     }
 
     @Ignore
-    public int compareTo(Stock newStock) {
-        return this.symbol.compareTo(newStock.symbol);
+    private DefaultStock() { }
+
+    public DefaultStock(@NonNull String symbol, @NonNull String country) {
+        this.symbol = symbol;
+        this.country = country;
     }
+
 }

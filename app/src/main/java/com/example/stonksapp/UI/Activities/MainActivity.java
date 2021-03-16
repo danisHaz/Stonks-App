@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private WatchCurrentStonksFragment watchCurrentStonksFragment;
     private ManageFavouriteStonksFragment manageFavouriteStonksFragment;
 
+    public static int firstLaunchOrNot = 1;
+
     public WatchCurrentStonksFragment getWatchStonksFragment() {
         return watchCurrentStonksFragment;
     }

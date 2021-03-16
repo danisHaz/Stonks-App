@@ -38,6 +38,7 @@ public class WebSocketClient {
     private void reconnect() {
         try {
             socket.recreate().connect();
+            Log.d("SocketClient", "reconnection OK");
         } catch (java.io.IOException | WebSocketException e) {
             e.printStackTrace();
         }

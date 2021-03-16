@@ -76,11 +76,9 @@ public class FavouriteStock implements FavouriteObject {
     }
 
     public static void addToFavourites(Stock stock) {
-        for (int i = 0; i < currentFavourites.size(); i++) {
-            if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
-                Log.d("Warn", "Provided stock already in favourites");
-                return;
-            }
+        if (isInFavourites(stock) != -1) {
+            Log.d("Warn", "Provided stock already in favourites");
+            return;
         }
 
         currentFavourites.add(stock);

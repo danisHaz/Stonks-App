@@ -10,6 +10,7 @@ import androidx.room.Room;
 import androidx.room.Update;
 
 import android.content.Context;
+import android.nfc.tech.Ndef;
 
 import java.util.ArrayList;
 import java.lang.Thread;
@@ -65,14 +66,41 @@ public class StockDataBase {
         thread.start();
     }
 
+    public void updateCurrent(final Stock stock) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                CurrentStockDao dao = mDb.currentDao();
+                dao.update(DefaultStock.from(stock));
+            }
+        });
+
+        thread.start();
+    }
+
+    public void insertCurrent(final Stock stock) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                 CurrentStockDao dao = mDb.currentDao();
+                 dao.insert(DefaultStock.from(stock));
+            }
+        });
+    }
+
     // todo: RxJava
     public void getAll(final Class<? extends FavouriteObject> objClass) throws NullPointerException {
         Thread thread = new Thread(new Runnable() {
             @Override
             public synchronized void run() {
-                StockDao dao = mDb.stockDao();
                 if (objClass == FavouriteStock.class) {
+                    StockDao dao = mDb.stockDao();
                     FavouriteStock.currentFavourites = dao.getAll();
+                } else if (objClass == WatchingStocks.class) {
+                    List<DefaultStock> defList = mDb.currentDao().getAll();
+                    for (DefaultStock stockie: defList) {
+                        WatchingStocks.watchingStocks.add(Stock.from(stockie));
+                    }
                 }
             }
         });
@@ -98,9 +126,29 @@ public class StockDataBase {
         void update(Stock stock);
     }
 
-    @Database(entities = {Stock.class}, version = 1)
+    @Dao
+    public interface CurrentStockDao {
+        @Query("SELECT * FROM defaultstock")
+        List<DefaultStock> getAll();
+
+        @Insert
+        void insertAll(DefaultStock... stocks);
+
+        @Insert
+        void insert(DefaultStock stock);
+
+        @Delete
+        void delete(DefaultStock stock);
+
+        @Update
+        void update(DefaultStock stock);
+    }
+
+
+    @Database(entities = {Stock.class, DefaultStock.class}, version = 1)
     public abstract static class StockDB extends RoomDatabase {
         public abstract StockDao stockDao();
+        public abstract CurrentStockDao currentDao();
     }
 
 }
