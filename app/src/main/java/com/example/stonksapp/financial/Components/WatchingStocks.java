@@ -1,15 +1,37 @@
 package com.example.stonksapp.financial.Components;
 
+import com.example.stonksapp.financial.Network.WebSocketClient;
 import com.example.stonksapp.Constants;
-import com.example.stonksapp.financial.Network.HTTPSRequestClient;
-import com.example.stonksapp.financial.StockSymbol;
+import com.example.stonksapp.UI.Activities.MainActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WatchingStocks {
-    public static ArrayList<Stock> watchingStocks = new ArrayList<>();
+    public static List<Stock> watchingStocks = new ArrayList<>();
+    public static WebSocketClient client;
+    private static MainActivity activity;
 
-    public static void define() {
+    private static void createSocketConnection() {
+        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
+                activity);
+        client.connect();
+    }
+
+    private static void destroySocketConnection() {
+        client.disconnect();
+    }
+
+    public static void destroy() {
+        destroySocketConnection();
+        client = null;
+    }
+
+    public static WebSocketClient getClient() { return client; }
+
+    public static void define(MainActivity mActivity) {
+        activity = mActivity;
+        createSocketConnection();
 //        HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
 //        StockSymbol[] curArray = client.StockSymbols(String.format(
 //                Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
@@ -37,6 +59,7 @@ public class WatchingStocks {
         for (int i = 0; i < watchingStocks.size(); i++) {
             if (watchingStocks.get(i).symbol.equals(stock.symbol)) {
                 watchingStocks.set(i, stock);
+                return;
             }
         }
     }

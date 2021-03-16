@@ -47,22 +47,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(properContentView);
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
-            WatchingStocks.define();
+            WatchingStocks.define(this);
+            FavouriteStock.defineDB(this);
 
             watchCurrentStonksFragment =
                     WatchCurrentStonksFragment.createInstance(null, this);
 
             manageFavouriteStonksFragment =
-                    ManageFavouriteStonksFragment.createInstance(null);
+                    ManageFavouriteStonksFragment.createInstance(null, this);
 
             this.setDefaultFragment();
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
             setSupportActionBar(mToolbar);
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                    this, Constants.toStringArray(WatchingStocks.getSymbols()));
-
-            FavouriteStock.defineDB(this);
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_WATCHING);
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_FAVOURITE);
         }
 
     }
@@ -77,9 +76,10 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this,
-                Constants.toStringArray(WatchingStocks.getSymbols()),
-                (byte)0);
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_WATCHING);
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_FAVOURITE);
+        FavouriteStock.destroy();
+        WatchingStocks.destroy();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     private void setManageFavouritesStonksFragment() {
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.frag, ManageFavouriteStonksFragment.createInstance(new Bundle()),
+                .replace(R.id.frag, manageFavouriteStonksFragment,
                         Constants.MANAGE_YOUR_FAVOURITES_TAG)
                 .commit();
 

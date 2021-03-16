@@ -98,8 +98,6 @@ public class WebSocketClient {
 
         // todo: all updates should work async
         private void update(String message) {
-            if (!MainActivity.attachedFragmentTag.equals(Constants.WATCH_STONKS_TAG))
-                return;
 
             Gson gson = (new GsonBuilder()).create();
 
@@ -111,9 +109,8 @@ public class WebSocketClient {
                     WatchingStocks.update(stock);
                     resultId = activity.getWatchStonksFragment().updateAndRefresh();
                 } else {
-                    Log.d("log", "Update Favourite");
                     FavouriteStock.updateFavourite(stock);
-                    resultId = activity.getManageFavouriteFragment().updateAndRefresh(activity);
+                    resultId = activity.getManageFavouriteFragment().updateAndRefresh();
                 }
 
                 if (resultId == Constants.SUCCESS) {
@@ -139,12 +136,8 @@ public class WebSocketClient {
             if (message.equals(Constants.PING_MESSAGE))
                 return;
 
-//            if (limit != 15) {
-//                limit++;
-//                return;
-//            }
+            // todo: set some frequency limits
 
-            limit = 0;
             update(message);
         }
 

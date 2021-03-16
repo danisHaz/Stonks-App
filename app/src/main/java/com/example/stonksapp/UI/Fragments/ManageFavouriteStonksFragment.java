@@ -27,28 +27,31 @@ import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class ManageFavouriteStonksFragment extends Fragment {
-    private ArrayList<Stock> stockList;
     private CustomAdapter adapter;
+    private AppCompatActivity activity;
 
     public ManageFavouriteStonksFragment() {
         // Required empty public constructor
     }
 
-    public static ManageFavouriteStonksFragment createInstance(@Nullable Bundle bundle) {
+    public static ManageFavouriteStonksFragment createInstance(
+            @Nullable Bundle bundle, @NonNull AppCompatActivity activity) {
         ManageFavouriteStonksFragment fragment = new ManageFavouriteStonksFragment();
+        fragment.activity = activity;
         fragment.setArguments(bundle);
         return fragment;
     }
 
-    public int updateAndRefresh(@NonNull AppCompatActivity activity) {
+    public int updateAndRefresh() {
+        Log.d("Favourite", "trying to update");
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
-            Fragment usedFragment = activity.getSupportFragmentManager()
-                    .findFragmentByTag(Constants.MANAGE_YOUR_FAVOURITES_TAG);
+//            Fragment usedFragment = activity.getSupportFragmentManager()
+//                    .findFragmentByTag(Constants.MANAGE_YOUR_FAVOURITES_TAG);
 
-            transaction.detach(usedFragment);
-            transaction.attach(usedFragment).commit();
+            transaction.detach(this);
+            transaction.attach(this).commit();
 
             return Constants.SUCCESS;
         } catch (NullPointerException e) {

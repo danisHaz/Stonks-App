@@ -19,19 +19,8 @@ public class CustomMatrixCursor {
 
     public MatrixCursor getCursorFromQuery(String query) {
         HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
-        String[] result = client.symbolLookup(String.format(
-                Constants.GET_SYMBOL_LOOKUP_TEMPLATE, query, Constants.API_TOKEN))
-                .getArrayOf(SymbolQuery.SYMBOL_TYPE);
-
-        Object[][] res = new Object[result.length][3];
-
-        int pos = 0;
-        for (String cur: result) {
-            res[pos][0] = pos;
-            res[pos][1] = cur;
-            res[pos][2] = cur;
-            pos++;
-        }
+        SymbolQuery resultQuery = client.symbolLookup(String.format(
+                Constants.GET_SYMBOL_LOOKUP_TEMPLATE, query, Constants.API_TOKEN));
 
         String[] columnNames = new String[3];
         columnNames[0] = "_id";
@@ -40,7 +29,25 @@ public class CustomMatrixCursor {
 
         MatrixCursor cursor = new MatrixCursor(columnNames);
 
-        for (int i = 0; i < java.lang.Math.min(pos, 3); i++) {
+        if (resultQuery == null)
+            return cursor;
+
+        String[] symbolResult = resultQuery
+                .getArrayOf(SymbolQuery.SYMBOL_TYPE);
+
+        String[] descriptionResult = resultQuery
+                .getArrayOf(SymbolQuery.DESCRIPTION_TYPE);
+
+        Object[][] res = new Object[symbolResult.length][3];
+
+        for (int pos = 0; pos < symbolResult.length; pos++) {
+            res[pos][0] = pos;
+            res[pos][1] = descriptionResult[pos];
+            res[pos][2] = symbolResult[pos];
+            pos++;
+        }
+
+        for (int i = 0; i < java.lang.Math.min(symbolResult.length, 3); i++) {
             cursor.addRow(res[i]);
         }
 
