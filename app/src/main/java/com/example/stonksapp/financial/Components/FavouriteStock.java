@@ -1,45 +1,25 @@
 package com.example.stonksapp.financial.Components;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.example.stonksapp.Constants;
-import com.example.stonksapp.UI.Activities.MainActivity;
-import com.example.stonksapp.financial.Network.WebSocketClient;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
 public class FavouriteStock implements FavouriteObject {
-    private static StockDataBase myDB;
-    public static boolean isDefined = false;
-    public static List<Stock> currentFavourites;
+    public static List<Stock> currentFavourites = new ArrayList<>();
     private static TreeSet<Stock> delayedDelete = new TreeSet<>();
-    private static WebSocketClient client;
-    private static MainActivity activity;
 
     @Override
     public void setFavourite() {
         // add favourite stock
     }
 
-    public static void createSocketConnection() {
-        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
-                activity);
-        client.connect();
+    public static void define() {
+        BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
     }
-
-    private static void destroySocketConnection() {
-        client.disconnect();
-    }
-
-    public static void destroy() {
-        destroySocketConnection();
-        client = null;
-    }
-
-    public static WebSocketClient getClient() { return client; }
 
     public static ArrayList<String> getSymbols() {
         ArrayList<String> symbolsList = new ArrayList<>();
@@ -82,19 +62,18 @@ public class FavouriteStock implements FavouriteObject {
         }
 
         currentFavourites.add(stock);
-        myDB.insertFavourite(stock);
+        BackgroundTaskHandler.myDb.insertFavourite(stock);
     }
 
     public static void updateFavourite(Stock stock) {
         for (int i = 0; i < currentFavourites.size(); i++) {
             if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
                 currentFavourites.set(i, stock);
-                myDB.updateFavourite(stock);
+                BackgroundTaskHandler.myDb.updateFavourite(stock);
                 return;
             }
         }
 
-        Log.e("Err", "Unable to find and update stock");
     }
 
     public static void deleteFromFavourites(Stock stock) {
@@ -102,7 +81,7 @@ public class FavouriteStock implements FavouriteObject {
             Stock currStock  = currentFavourites.get(i);
             if (currStock.symbol.equals(stock.symbol)) {
                 currentFavourites.remove(i);
-                myDB.deleteFromFavourites(currStock);
+                BackgroundTaskHandler.myDb.deleteFromFavourites(currStock);
                 return;
             }
         }
@@ -110,16 +89,4 @@ public class FavouriteStock implements FavouriteObject {
         Log.e("Err", "Attempt to delete element from favourites that not exist");
     }
 
-    public static void defineDB(MainActivity mActivity) {
-        if (isDefined)
-            return;
-
-        myDB = StockDataBase.createInstance(mActivity);
-        myDB.getAll(FavouriteStock.class);
-        activity = mActivity;
-
-        createSocketConnection();
-
-        isDefined = true;
-    }
 }

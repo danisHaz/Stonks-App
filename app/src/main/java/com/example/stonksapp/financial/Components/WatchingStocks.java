@@ -1,66 +1,44 @@
 package com.example.stonksapp.financial.Components;
 
-import com.example.stonksapp.financial.Network.WebSocketClient;
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WatchingStocks implements FavouriteObject {
-    private static StockDataBase myDb;
     public static List<Stock> watchingStocks = new ArrayList<>();
-    public static WebSocketClient client;
     private static MainActivity activity;
 
     @Override
     public void setFavourite() { }
 
-    private static void createSocketConnection() {
-        client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
-                activity);
-        client.connect();
-    }
-
-    private static void destroySocketConnection() {
-        client.disconnect();
-    }
-
-    public static void destroy() {
-        destroySocketConnection();
-        client = null;
-    }
-
-    public static WebSocketClient getClient() { return client; }
-
     public static void define(MainActivity mActivity) {
         activity = mActivity;
-        myDb = StockDataBase.createInstance(activity);
+        SharedPreferences prefs = mActivity.getSharedPreferences(Constants.WATCH_STONKS_TAG, Context.MODE_PRIVATE);
 
-        if (MainActivity.firstLaunchOrNot == 0)
-            myDb.getAll(WatchingStocks.class);
+        if (!prefs.getBoolean("isFirstBoot", true))
+            BackgroundTaskHandler.myDb.getAll(WatchingStocks.class);
         else {
-            Stock one = new Stock("GOOGL", "US");
-            Stock two = new Stock("AMZN", "US");
-            Stock three = new Stock("AAPL", "US");
-            watchingStocks.add(one);
-            watchingStocks.add(two);
-            watchingStocks.add(three);
-            myDb.insertCurrent(one);
-            myDb.insertFavourite(two);
-            myDb.insertCurrent(three);
-        }
 
-        createSocketConnection();
-//        HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
-//        StockSymbol[] curArray = client.StockSymbols(String.format(
-//                Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", Constants.API_TOKEN));
-//
-//        for (int pos = 0; pos < 10; pos++) {
-//            watchingStocks.add(new Stock(curArray[pos].symbol, "US"));
-//        }
+            insert(new Stock("GOOGL", "US"));
+            insert(new Stock("AAPL", "US"));
+            insert(new Stock("AMZN", "US"));
+            insert(new Stock("NFLX", "US"));
+            insert(new Stock("TSLA", "US"));
+
+
+            Log.d("D", "set is complete");
+
+            SharedPreferences.Editor pprefs =  prefs.edit();
+            pprefs.putBoolean("isFirstBoot", false);
+            pprefs.apply();
+        }
 
     }
 
@@ -78,12 +56,22 @@ public class WatchingStocks implements FavouriteObject {
         for (int i = 0; i < watchingStocks.size(); i++) {
             if (watchingStocks.get(i).symbol.equals(stock.symbol)) {
                 watchingStocks.set(i, stock);
-                myDb.updateCurrent(stock);
+                BackgroundTaskHandler.myDb.updateCurrent(stock);
+                return;
+            }
+        }
+    }
+
+    public static void insert(Stock stock) {
+        for (int i = 0; i < watchingStocks.size(); i++) {
+            if (watchingStocks.get(i).symbol.equals(stock.symbol)) {
+                Log.d("Warn", "Provided stock already in current");
                 return;
             }
         }
 
-        Log.e("Err", String.format("Trying to update unresolved stock = %s", stock.symbol));
+        watchingStocks.add(stock);
+        BackgroundTaskHandler.myDb.insertCurrent(stock);
     }
 
 }

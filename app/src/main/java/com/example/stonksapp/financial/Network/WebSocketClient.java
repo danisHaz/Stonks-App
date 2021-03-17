@@ -95,7 +95,6 @@ public class WebSocketClient {
     // class to listen to WebSocket actions
     public class SocketListener extends WebSocketAdapter {
         private String listenerTag = "SocketListenerTag";
-        private int limit = 0;
 
         // todo: all updates should work async
         private void update(String message) {
@@ -114,9 +113,7 @@ public class WebSocketClient {
                     resultId = activity.getManageFavouriteFragment().updateAndRefresh();
                 }
 
-                if (resultId == Constants.SUCCESS) {
-                    Log.d("Socket Updater", "update success");
-                } else {
+                if (resultId == Constants.FAILURE) {
                     Log.d("Socket Updater", "update failure");
                 }
             } catch (JsonSyntaxException e) {
@@ -132,12 +129,8 @@ public class WebSocketClient {
 
         @Override
         public void onTextMessage(WebSocket ws, String message) {
-//            Log.i("MessageReceived", message);
-
             if (message.equals(Constants.PING_MESSAGE))
                 return;
-
-            // todo: set some frequency limits
 
             update(message);
         }

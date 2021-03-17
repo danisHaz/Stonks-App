@@ -4,11 +4,11 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import java.lang.NullPointerException;
-import android.util.Log;
 
 public class SuggestionsContentProvider extends ContentProvider {
     public SuggestionsContentProvider() {

@@ -17,21 +17,17 @@ import java.util.ArrayList;
 public class ChangeCurrentPricesService extends JobService{
 
     public ChangeCurrentPricesService() { }
-    private static String[] list;
+    private static String[] list1;
 
-    private static void lastPricesUpdate(final String json, final int currentClass) {
-        for (final String symbol: list) {
+    private static void lastPricesUpdate(final String json) {
+
+        for (final String symbol: list1) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (currentClass == Constants.CURRENT_CLASS_IS_FAVOURITE)
-                        FavouriteStock.getClient().sendTextViaSocket(
-                                String.format(
-                                        json, symbol));
-                    else if (currentClass == Constants.CURRENT_CLASS_IS_WATCHING)
-                        WatchingStocks.getClient().sendTextViaSocket(
-                                String.format(
-                                        json, symbol));
+                    BackgroundTaskHandler.getClient().sendTextViaSocket(
+                            String.format(json, symbol)
+                    );
                 }
             }).start();
         }
@@ -40,15 +36,12 @@ public class ChangeCurrentPricesService extends JobService{
     @Override
     public boolean onStartJob(JobParameters params) {
         int taskId = params.getExtras().getInt("taskId");
-        int currentClass = params.getExtras().getInt("currentClass");
-        list = currentClass == Constants.CURRENT_CLASS_IS_WATCHING ?
-                Constants.toStringArray(WatchingStocks.getSymbols())
-                : Constants.toStringArray(FavouriteStock.getSymbols());
+        list1 = params.getExtras().getStringArray("arr");
 
         if (taskId == Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID)
-            lastPricesUpdate(Constants.SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE, currentClass);
+            lastPricesUpdate(Constants.SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE);
         else
-            lastPricesUpdate(Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE, currentClass);
+            lastPricesUpdate(Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE);
 
         return true;
     }

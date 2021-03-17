@@ -14,21 +14,17 @@ import androidx.appcompat.widget.SearchView;
 
 import android.app.SearchManager;
 import android.content.ComponentName;
-import android.content.Intent;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
     private static byte defaultFragment = 0;
     private WatchCurrentStonksFragment watchCurrentStonksFragment;
     private ManageFavouriteStonksFragment manageFavouriteStonksFragment;
-
-    public static int firstLaunchOrNot = 1;
 
     public WatchCurrentStonksFragment getWatchStonksFragment() {
         return watchCurrentStonksFragment;
@@ -49,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(properContentView);
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
+            BackgroundTaskHandler.defineDB(this);
             WatchingStocks.define(this);
-            FavouriteStock.defineDB(this);
+            FavouriteStock.define();
 
             watchCurrentStonksFragment =
                     WatchCurrentStonksFragment.createInstance(null, this);
@@ -62,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
             setSupportActionBar(mToolbar);
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_WATCHING);
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_FAVOURITE);
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(Constants.toStringArray(FavouriteStock.getSymbols()));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(Constants.toStringArray(WatchingStocks.getSymbols()));
         }
 
     }
@@ -78,10 +75,8 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_WATCHING);
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(this, Constants.CURRENT_CLASS_IS_FAVOURITE);
-        FavouriteStock.destroy();
-        WatchingStocks.destroy();
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(Constants.toStringArray(FavouriteStock.getSymbols()));
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(Constants.toStringArray(WatchingStocks.getSymbols()));
     }
 
     @Override

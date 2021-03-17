@@ -5,7 +5,6 @@ import com.example.stonksapp.financial.Components.SymbolQuery;
 import com.example.stonksapp.Constants;
 
 import android.database.MatrixCursor;
-import android.util.Log;
 
 import java.lang.Object;
 

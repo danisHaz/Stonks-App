@@ -10,9 +10,8 @@ import androidx.room.Room;
 import androidx.room.Update;
 
 import android.content.Context;
-import android.nfc.tech.Ndef;
+import android.util.Log;
 
-import java.util.ArrayList;
 import java.lang.Thread;
 import java.lang.NullPointerException;
 import java.lang.Class;
@@ -86,6 +85,8 @@ public class StockDataBase {
                  dao.insert(DefaultStock.from(stock));
             }
         });
+
+        thread.start();
     }
 
     // todo: RxJava
@@ -93,10 +94,12 @@ public class StockDataBase {
         Thread thread = new Thread(new Runnable() {
             @Override
             public synchronized void run() {
+                Log.d("D", "getting all");
                 if (objClass == FavouriteStock.class) {
                     StockDao dao = mDb.stockDao();
                     FavouriteStock.currentFavourites = dao.getAll();
                 } else if (objClass == WatchingStocks.class) {
+                    Log.d("D", "getting watch stocks");
                     List<DefaultStock> defList = mDb.currentDao().getAll();
                     for (DefaultStock stockie: defList) {
                         WatchingStocks.watchingStocks.add(Stock.from(stockie));

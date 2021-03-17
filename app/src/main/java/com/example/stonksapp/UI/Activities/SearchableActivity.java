@@ -1,5 +1,13 @@
 package com.example.stonksapp.UI.Activities;
 
+import com.example.stonksapp.R;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
+import com.example.stonksapp.financial.Network.HTTPSRequestClient;
+import com.example.stonksapp.financial.Components.SymbolQuery;
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.financial.Components.FavouriteStock;
+import com.example.stonksapp.financial.Components.Stock;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.SearchManager;
@@ -12,13 +20,6 @@ import android.widget.AdapterView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.stonksapp.R;
-import com.example.stonksapp.financial.Network.HTTPSRequestClient;
-import com.example.stonksapp.financial.Components.SymbolQuery;
-import com.example.stonksapp.Constants;
-import com.example.stonksapp.financial.Components.FavouriteStock;
-import com.example.stonksapp.financial.Components.Stock;
 
 import java.util.ArrayList;
 
@@ -63,6 +64,7 @@ public class SearchableActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> adap, View view, int pos, long id) {
                     String mSymbol = (String) adap.getItemAtPosition(pos);
                     FavouriteStock.addToFavourites(new Stock(mSymbol, "US"));
+                    BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{mSymbol});
                     Toast.makeText(SearchableActivity.this, String.format(
                             "%s added to favourites", mSymbol), Toast.LENGTH_LONG).show();
 
@@ -75,13 +77,20 @@ public class SearchableActivity extends AppCompatActivity {
             try {
                 tup = intent.getDataString();
             } catch (java.lang.IllegalStateException e) {
-                Log.d("Err", "jopa");
+                Log.e("Err", "Illegal State Exception in ACTION_VIEW");
             }
+
             if (tup == null) {
                 Log.e("Err", "Chosen suggestion provided null symbol");
                 finish();
             }
-            FavouriteStock.addToFavourites(new Stock(tup, "US"));
+
+            try {
+                FavouriteStock.addToFavourites(new Stock(tup, "US"));
+                BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup});
+            } catch (java.lang.NullPointerException e) {
+                Log.e("Err", "Chosen symbol in suggestions is null");
+            }
             finish();
         } else {
             Log.e("Err", "Wrong query to SearchableActivity");

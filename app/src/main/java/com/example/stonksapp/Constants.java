@@ -1,7 +1,7 @@
 package com.example.stonksapp;
 
 public class Constants {
-    public static final String WATCH_STONKS_TAG = "watchStonksTag";
+    public static final String WATCH_STONKS_TAG = "com.example.stonksapp";
     public static final String MANAGE_YOUR_FAVOURITES_TAG = "manageFavouriteStonksTag";
     public static final String MAIN_API_URI = "wss://ws.finnhub.io?token=";
     public static final String API_TOKEN = "c12ht2f48v6oi252p5ag";
@@ -12,7 +12,7 @@ public class Constants {
             "{\"type\": \"unsubscribe\", \"symbol\": \"%s\"}";
 
     public static final String GET_STOCK_SYMBOLS_TEMPLATE =
-            "https://finnhub.io/api/v1/stock/symbol?exchange=%s&token=%s";
+            "https://finnhub.io/api/v1/stock/symbol?exchange=%s&mic=%s&token=%s";
 
     public static final String GET_SYMBOL_LOOKUP_TEMPLATE =
             "https://finnhub.io/api/v1/search?q=%s&token=%s";
