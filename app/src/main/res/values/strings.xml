@@ -1,7 +1,7 @@
 <resources>
     <string name="appName">Stonks App</string>
 
-    <string name="currentStonks">Current Stonks</string>
+    <string name="currentStonks">Current</string>
 
     <string name="favourites">Favourites</string>
 
