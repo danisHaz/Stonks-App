@@ -89,7 +89,7 @@ public class WebSocketClient {
 
     public void sendTextViaSocket(String someText) {
         socket.sendText(someText);
-        Log.d("Socket", "Message sent");
+        Log.d("Socket", someText);
     }
 
     // class to listen to WebSocket actions

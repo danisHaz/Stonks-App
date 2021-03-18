@@ -38,6 +38,8 @@ public class ChangeCurrentPricesService extends JobService{
         int taskId = params.getExtras().getInt("taskId");
         list1 = params.getExtras().getStringArray("arr");
 
+        Log.d("List sizeof", String.valueOf(list1.length));
+
         if (taskId == Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID)
             lastPricesUpdate(Constants.SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE);
         else

@@ -61,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
             setSupportActionBar(mToolbar);
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(Constants.toStringArray(FavouriteStock.getSymbols()));
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(Constants.toStringArray(WatchingStocks.getSymbols()));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                    Constants.toStringArray(WatchingStocks.getSymbols()));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                    Constants.toStringArray(FavouriteStock.getSymbols()));
         }
 
     }
@@ -76,9 +78,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
+                Constants.toStringArray(FavouriteStock.getSymbols()));
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
+                Constants.toStringArray(WatchingStocks.getSymbols()));
+        BackgroundTaskHandler.destroyConnection();
 
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(Constants.toStringArray(FavouriteStock.getSymbols()));
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(Constants.toStringArray(WatchingStocks.getSymbols()));
     }
 
     @Override
