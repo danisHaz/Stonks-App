@@ -8,7 +8,6 @@ import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Components.*;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.widget.SearchView;
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String attachedFragmentTag = Constants.WATCH_STONKS_TAG;
+    public static boolean ifNothingAttached = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(properContentView);
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
+            if (BackgroundTaskHandler.myDb != null)
+                return;
+
             BackgroundTaskHandler.defineDB(this);
             WatchingStocks.define(this);
             FavouriteStock.define();

@@ -7,6 +7,9 @@ import com.example.stonksapp.financial.Components.SymbolQuery;
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.financial.Components.FavouriteStock;
 import com.example.stonksapp.financial.Components.Stock;
+import com.example.stonksapp.financial.SimpleStockTransporter;
+import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +23,7 @@ import android.widget.AdapterView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -28,23 +32,33 @@ public class SearchableActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_searchable);
+        MainActivity.ifNothingAttached = true;
 
-        Log.d("DEbuG", "Eboyyy");
+        setContentView(R.layout.activity_searchable);
 
         Intent intent = getIntent();
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+
             String query = intent.getStringExtra(SearchManager.QUERY);
 
             HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
-            SymbolQuery result = client.symbolLookup(String.format(
+            final SymbolQuery result = client.symbolLookup(String.format(
                     Constants.GET_SYMBOL_LOOKUP_TEMPLATE, query, Constants.API_TOKEN
             ));
 
             ArrayList<String> list = new ArrayList<>();
             for (SymbolQuery.SingleResult res: result.resultArray) {
-                list.add(res.symbol);
+                list.add(res.description);
             }
 
             ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this,
@@ -62,11 +76,15 @@ public class SearchableActivity extends AppCompatActivity {
             listView.setOnItemClickListener(new ListView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adap, View view, int pos, long id) {
-                    String mSymbol = (String) adap.getItemAtPosition(pos);
-                    FavouriteStock.addToFavourites(new Stock(mSymbol, "US"));
-                    BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{mSymbol});
+                    FavouriteStock.addToFavourites(new Stock(result.resultArray[pos].symbol,
+                            result.resultArray[pos].description,"US", null));
+
+                    BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                            new String[]{result.resultArray[pos].symbol});
+
                     Toast.makeText(SearchableActivity.this, String.format(
-                            "%s added to favourites", mSymbol), Toast.LENGTH_LONG).show();
+                            "%s added to favourites", result.resultArray[pos].symbol),
+                            Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -85,8 +103,11 @@ public class SearchableActivity extends AppCompatActivity {
                 finish();
             }
 
+            SimpleStockTransporter transporter = (new GsonBuilder().create())
+                    .fromJson(tup, SimpleStockTransporter.class);
+
             try {
-                FavouriteStock.addToFavourites(new Stock(tup, "US"));
+                FavouriteStock.addToFavourites(new Stock(transporter.symbol, transporter.description, "US", null));
                 BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup});
             } catch (java.lang.NullPointerException e) {
                 Log.e("Err", "Chosen symbol in suggestions is null");
@@ -101,5 +122,6 @@ public class SearchableActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        MainActivity.ifNothingAttached = false;
     }
 }

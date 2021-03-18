@@ -78,6 +78,7 @@ public class Stock implements Comparable<Stock> {
     @Ignore
     private Stock() { }
 
+    @Deprecated
     @Ignore
     public Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
         this.symbol = symbol;
@@ -86,9 +87,17 @@ public class Stock implements Comparable<Stock> {
     }
 
     @Ignore
+    public Stock(@NonNull String symbol, String name, @Nullable String country, @Nullable String price) {
+        this.symbol = symbol;
+        this.name = name;
+        this.country = country;
+        this.price = price;
+    }
+
+    @Ignore
     public static Stock from(TradesPrices trades) {
         TradesData data = trades.data[trades.data.length - 1];
-        Stock newStock = new Stock(data.symbol, null, data.price);
+        Stock newStock = new Stock(data.symbol, null, null, data.price);
         return newStock;
     }
 

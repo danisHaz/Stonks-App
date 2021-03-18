@@ -83,12 +83,14 @@ public class WatchCurrentStonksFragment extends Fragment {
         final TextView cell;
         final TextView priceCell;
         final CheckBox button;
+        final TextView description;
 
         CustomViewHolder(@NonNull View v) {
             super(v);
             cell = (TextView) v.findViewById(R.id.simpleTextView);
             priceCell = (TextView) v.findViewById(R.id.priceTextView);
             button = (CheckBox) v.findViewById(R.id.setFavouriteButton);
+            description = (TextView) v.findViewById(R.id.descriptionTextView);
         }
     }
 
@@ -111,6 +113,8 @@ public class WatchCurrentStonksFragment extends Fragment {
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
                 holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
+                holder.description.setText(WatchingStocks.watchingStocks.get(pos).name == null ?
+                        "Company Name": WatchingStocks.watchingStocks.get(pos).name);
                 holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
                 holder.button.setChecked(FavouriteStock.isInFavourites(
                         WatchingStocks.watchingStocks.get(pos)) != -1);

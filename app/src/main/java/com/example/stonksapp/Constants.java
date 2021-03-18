@@ -3,6 +3,7 @@ package com.example.stonksapp;
 public class Constants {
     public static final String WATCH_STONKS_TAG = "com.example.stonksapp";
     public static final String MANAGE_YOUR_FAVOURITES_TAG = "manageFavouriteStonksTag";
+    public static final String NOTHING_ATTACHED_TAG = "nothingAttachedTag";
     public static final String MAIN_API_URI = "wss://ws.finnhub.io?token=";
     public static final String API_TOKEN = "c12ht2f48v6oi252p5ag";
     public static final String SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE =

@@ -8,6 +8,9 @@
     android:gravity="start"
     tools:context=".UI.Activities.SearchableActivity">
 
+    <include
+        layout="@layout/toolbar_main"/>
+
     <TextView
         android:id="@+id/yourListView"
         android:layout_width="match_parent"

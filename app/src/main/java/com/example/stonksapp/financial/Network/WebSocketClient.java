@@ -129,7 +129,7 @@ public class WebSocketClient {
 
         @Override
         public void onTextMessage(WebSocket ws, String message) {
-            if (message.equals(Constants.PING_MESSAGE))
+            if (message.equals(Constants.PING_MESSAGE) || MainActivity.ifNothingAttached)
                 return;
 
             update(message);

@@ -96,12 +96,14 @@ public class ManageFavouriteStonksFragment extends Fragment {
         final TextView cell;
         final TextView priceCell;
         final CheckBox button;
+        final TextView description;
 
         CustomViewHolder(@NonNull View view) {
             super(view);
             cell = (TextView) view.findViewById(R.id.simpleTextView);
             priceCell = (TextView) view.findViewById(R.id.priceTextView);
             button = (CheckBox) view.findViewById(R.id.setFavouriteButton);
+            description = (TextView) view.findViewById(R.id.descriptionTextView);
         }
     }
 
@@ -116,6 +118,8 @@ public class ManageFavouriteStonksFragment extends Fragment {
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
                 holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
+                holder.description.setText(FavouriteStock.currentFavourites.get(pos).name == null ?
+                        "Company Name": FavouriteStock.currentFavourites.get(pos).name);
                 holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
                 holder.button.setChecked(true);
             } catch (NullPointerException e) {

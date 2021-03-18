@@ -8,21 +8,34 @@
     android:orientation="horizontal"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/simpleTextView"
-        android:layout_width="match_parent"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
         android:paddingStart="10dp"
         android:paddingTop="5dp"
         android:paddingEnd="30dp"
         android:paddingBottom="5dp"
-        android:textColor="@color/textPrimary"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        tools:text="Hello there"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" >
+        <TextView
+            android:id="@+id/simpleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="@color/textPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            tools:text="@string/helloThere"/>
+
+        <TextView
+            android:id="@+id/descriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textSecondary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:text="@string/helloThere"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <TextView
         android:id="@+id/priceTextView"
@@ -34,8 +47,9 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="Hello there"
+        android:text="@string/helloThere"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/setFavouriteButton"
         />
 
@@ -43,6 +57,7 @@
         android:id="@+id/setFavouriteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:button="@drawable/custom_checkbox_selector"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
