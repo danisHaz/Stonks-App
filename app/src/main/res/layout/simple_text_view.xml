@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:orientation="horizontal"
+    android:id="@+id/simpleLinearLayout"
     android:gravity="center">
 
     <androidx.appcompat.widget.LinearLayoutCompat

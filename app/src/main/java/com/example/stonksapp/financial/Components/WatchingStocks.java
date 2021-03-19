@@ -52,6 +52,7 @@ public class WatchingStocks implements FavouriteObject {
     public static void update(Stock stock) {
         for (int i = 0; i < watchingStocks.size(); i++) {
             if (watchingStocks.get(i).symbol.equals(stock.symbol)) {
+                stock.mergeNonNull(watchingStocks.get(i));
                 watchingStocks.set(i, stock);
                 BackgroundTaskHandler.myDb.updateCurrent(stock);
                 return;

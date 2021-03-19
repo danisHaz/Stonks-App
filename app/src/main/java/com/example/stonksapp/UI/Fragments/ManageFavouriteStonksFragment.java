@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -97,6 +98,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
         final TextView priceCell;
         final CheckBox button;
         final TextView description;
+        final ConstraintLayout constraintLayout;
 
         CustomViewHolder(@NonNull View view) {
             super(view);
@@ -104,6 +106,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
             priceCell = (TextView) view.findViewById(R.id.priceTextView);
             button = (CheckBox) view.findViewById(R.id.setFavouriteButton);
             description = (TextView) view.findViewById(R.id.descriptionTextView);
+            constraintLayout = (ConstraintLayout) view.findViewById(R.id.simpleLinearLayout);
         }
     }
 
@@ -117,6 +120,11 @@ public class ManageFavouriteStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
+                if (pos % 2 == 1)
+                    holder.constraintLayout.setBackgroundResource(R.drawable.simple_text_view_background);
+                else
+                    holder.constraintLayout.setBackgroundResource(R.drawable.simple_text_view_default);
+
                 holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
                 holder.description.setText(FavouriteStock.currentFavourites.get(pos).name == null ?
                         "Company Name": FavouriteStock.currentFavourites.get(pos).name);

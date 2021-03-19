@@ -68,6 +68,7 @@ public class FavouriteStock implements FavouriteObject {
     public static void updateFavourite(Stock stock) {
         for (int i = 0; i < currentFavourites.size(); i++) {
             if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
+                stock.mergeNonNull(currentFavourites.get(i));
                 currentFavourites.set(i, stock);
                 BackgroundTaskHandler.myDb.updateFavourite(stock);
                 return;

@@ -95,6 +95,23 @@ public class Stock implements Comparable<Stock> {
     }
 
     @Ignore
+    public void mergeNonNull(Stock stock) {
+        this.capitalization = stock.capitalization == null ? this.capitalization : stock.capitalization;
+        this.country = stock.country == null ? this.country : stock.country;
+        this.currency = stock.currency == null ? this.currency : stock.currency;
+        this.exchange = stock.exchange == null ? this.exchange : stock.exchange;
+        this.finnhubIndustry = stock.finnhubIndustry == null ? this.finnhubIndustry : stock.finnhubIndustry;
+        this.ipo = stock.ipo == null ? this.ipo : stock.ipo;
+        this.logo = stock.logo == null ? this.logo : stock.logo;
+        this.name = stock.name == null ? this.name : stock.name;
+        this.outstanding = stock.outstanding == null ? this.outstanding : stock.outstanding;
+        this.phone = stock.phone == null ? this.phone : stock.phone;
+        this.price = stock.price == null ? this.price : stock.price;
+        this.symbol = stock.symbol;
+        this.url = stock.url == null ? this.url : stock.url;
+    }
+
+    @Ignore
     public static Stock from(TradesPrices trades) {
         TradesData data = trades.data[trades.data.length - 1];
         Stock newStock = new Stock(data.symbol, null, null, data.price);
