@@ -2,6 +2,7 @@ package com.example.stonksapp.financial.Components;
 
 import com.example.stonksapp.financial.TradesPrices;
 import com.example.stonksapp.financial.TradesData;
+import com.example.stonksapp.financial.Components.SymbolQuery.SingleResult;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -116,6 +117,11 @@ public class Stock implements Comparable<Stock> {
         TradesData data = trades.data[trades.data.length - 1];
         Stock newStock = new Stock(data.symbol, null, null, data.price);
         return newStock;
+    }
+
+    @Ignore
+    public static Stock from(SingleResult res) {
+        return new Stock(res.symbol, res.description, "US", null);
     }
 
     @Ignore

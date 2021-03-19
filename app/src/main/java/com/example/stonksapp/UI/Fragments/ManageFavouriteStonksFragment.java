@@ -24,7 +24,6 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class ManageFavouriteStonksFragment extends Fragment {
@@ -48,8 +47,6 @@ public class ManageFavouriteStonksFragment extends Fragment {
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
-//            Fragment usedFragment = activity.getSupportFragmentManager()
-//                    .findFragmentByTag(Constants.MANAGE_YOUR_FAVOURITES_TAG);
 
             transaction.detach(this);
             transaction.attach(this).commit();
@@ -129,7 +126,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
                 holder.description.setText(FavouriteStock.currentFavourites.get(pos).name == null ?
                         "Company Name": FavouriteStock.currentFavourites.get(pos).name);
                 holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
-                holder.button.setChecked(true);
+                holder.button.setChecked(!FavouriteStock.isInDelayedDeletion(pos));
             } catch (NullPointerException e) {
                 Log.e("Err", "Current favourites is not valid");
                 e.printStackTrace();

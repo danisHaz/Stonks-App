@@ -1,5 +1,7 @@
 package com.example.stonksapp;
 
+import com.example.stonksapp.financial.Components.Stock;
+
 public class Constants {
     public static final String WATCH_STONKS_TAG = "com.example.stonksapp";
     public static final String MANAGE_YOUR_FAVOURITES_TAG = "manageFavouriteStonksTag";
@@ -39,6 +41,15 @@ public class Constants {
         }
 
         return false;
+    }
+
+    public static java.util.ArrayList<String> getSymbols(java.util.ArrayList<Stock> list) {
+        java.util.ArrayList<String> res = new java.util.ArrayList<>();
+        for (Stock t: list) {
+            res.add(t.symbol);
+        }
+
+        return res;
     }
 
     public static String[] toStringArray(java.util.List<String> list) {
