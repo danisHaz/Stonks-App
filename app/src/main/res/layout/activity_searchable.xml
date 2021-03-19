@@ -8,15 +8,18 @@
     android:gravity="start"
     tools:context=".UI.Activities.SearchableActivity">
 
+    <include
+        layout="@layout/toolbar_main"/>
+
     <TextView
         android:id="@+id/yourListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/helloThere"/>
 
-    <ListView
-        android:id="@+id/searchableView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

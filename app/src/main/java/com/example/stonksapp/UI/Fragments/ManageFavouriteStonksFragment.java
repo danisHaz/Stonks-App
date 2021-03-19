@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +24,6 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class ManageFavouriteStonksFragment extends Fragment {
@@ -47,8 +47,6 @@ public class ManageFavouriteStonksFragment extends Fragment {
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
-//            Fragment usedFragment = activity.getSupportFragmentManager()
-//                    .findFragmentByTag(Constants.MANAGE_YOUR_FAVOURITES_TAG);
 
             transaction.detach(this);
             transaction.attach(this).commit();
@@ -96,12 +94,16 @@ public class ManageFavouriteStonksFragment extends Fragment {
         final TextView cell;
         final TextView priceCell;
         final CheckBox button;
+        final TextView description;
+        final ConstraintLayout constraintLayout;
 
         CustomViewHolder(@NonNull View view) {
             super(view);
             cell = (TextView) view.findViewById(R.id.simpleTextView);
             priceCell = (TextView) view.findViewById(R.id.priceTextView);
             button = (CheckBox) view.findViewById(R.id.setFavouriteButton);
+            description = (TextView) view.findViewById(R.id.descriptionTextView);
+            constraintLayout = (ConstraintLayout) view.findViewById(R.id.simpleLinearLayout);
         }
     }
 
@@ -115,9 +117,16 @@ public class ManageFavouriteStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
+                if (pos % 2 == 1)
+                    holder.constraintLayout.setBackgroundResource(R.drawable.simple_text_view_background);
+                else
+                    holder.constraintLayout.setBackgroundResource(R.drawable.simple_text_view_default);
+
                 holder.cell.setText(FavouriteStock.currentFavourites.get(pos).symbol);
+                holder.description.setText(FavouriteStock.currentFavourites.get(pos).name == null ?
+                        "Company Name": FavouriteStock.currentFavourites.get(pos).name);
                 holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
-                holder.button.setChecked(true);
+                holder.button.setChecked(!FavouriteStock.isInDelayedDeletion(pos));
             } catch (NullPointerException e) {
                 Log.e("Err", "Current favourites is not valid");
                 e.printStackTrace();

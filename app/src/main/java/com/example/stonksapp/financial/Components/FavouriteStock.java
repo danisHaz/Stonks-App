@@ -46,6 +46,28 @@ public class FavouriteStock implements FavouriteObject {
         delayedDelete.remove(currentFavourites.get(pos));
     }
 
+    public static boolean isInDelayedDeletion(Stock stock) {
+        for (Stock s: delayedDelete) {
+            if (s.symbol.equals(stock.symbol))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isInDelayedDeletion(int pos) {
+        if (pos >= currentFavourites.size()) {
+            Log.e("Err", "Chosen Stock in favourites has incorrect position");
+            return false;
+        }
+        for (Stock s: delayedDelete) {
+            if (s.symbol.equals(currentFavourites.get(pos).symbol))
+                return true;
+        }
+
+        return false;
+    }
+
     public static int isInFavourites(Stock stock) {
         for (int i = 0; i < currentFavourites.size(); i++) {
             if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
@@ -68,8 +90,10 @@ public class FavouriteStock implements FavouriteObject {
     public static void updateFavourite(Stock stock) {
         for (int i = 0; i < currentFavourites.size(); i++) {
             if (currentFavourites.get(i).symbol.equals(stock.symbol)) {
-                currentFavourites.set(i, stock);
-                BackgroundTaskHandler.myDb.updateFavourite(stock);
+                Stock stck = currentFavourites.get(i);
+                stck.mergeNonNull(stock);
+                currentFavourites.set(i, stck);
+                BackgroundTaskHandler.myDb.updateFavourite(stck);
                 return;
             }
         }

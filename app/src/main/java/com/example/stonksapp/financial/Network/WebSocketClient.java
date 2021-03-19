@@ -89,7 +89,7 @@ public class WebSocketClient {
 
     public void sendTextViaSocket(String someText) {
         socket.sendText(someText);
-        Log.d("Socket", "Message sent");
+        Log.d("Socket", someText);
     }
 
     // class to listen to WebSocket actions
@@ -129,7 +129,7 @@ public class WebSocketClient {
 
         @Override
         public void onTextMessage(WebSocket ws, String message) {
-            if (message.equals(Constants.PING_MESSAGE))
+            if (message.equals(Constants.PING_MESSAGE) || MainActivity.ifNothingAttached)
                 return;
 
             update(message);

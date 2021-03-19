@@ -1,18 +1,10 @@
 package com.example.stonksapp.financial.Background;
-import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.Constants;
-import com.example.stonksapp.financial.Components.FavouriteStock;
-import com.example.stonksapp.financial.Components.WatchingStocks;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.content.Context;
-
-import org.json.JSONObject;
-import android.util.Log;
 
 import java.lang.Thread;
-import java.util.ArrayList;
 
 public class ChangeCurrentPricesService extends JobService{
 

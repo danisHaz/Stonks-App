@@ -26,14 +26,11 @@ public class WatchingStocks implements FavouriteObject {
             BackgroundTaskHandler.myDb.getAll(WatchingStocks.class);
         else {
 
-            insert(new Stock("GOOGL", "US"));
-            insert(new Stock("AAPL", "US"));
-            insert(new Stock("AMZN", "US"));
-            insert(new Stock("NFLX", "US"));
-            insert(new Stock("TSLA", "US"));
-
-
-            Log.d("D", "set is complete");
+            insert(new Stock("GOOGL", "GOOGLE INC",  "US", "N/A"));
+            insert(new Stock("AAPL", "APPLE INC", "US", "N/A"));
+            insert(new Stock("AMZN", "AMAZON INC", "US", "N/A"));
+            insert(new Stock("NFLX", "NETFLIX INC", "US", "N/A"));
+            insert(new Stock("TSLA", "TESLA INC", "US", "N/A"));
 
             SharedPreferences.Editor pprefs =  prefs.edit();
             pprefs.putBoolean("isFirstBoot", false);
@@ -55,8 +52,10 @@ public class WatchingStocks implements FavouriteObject {
     public static void update(Stock stock) {
         for (int i = 0; i < watchingStocks.size(); i++) {
             if (watchingStocks.get(i).symbol.equals(stock.symbol)) {
-                watchingStocks.set(i, stock);
-                BackgroundTaskHandler.myDb.updateCurrent(stock);
+                Stock stck = watchingStocks.get(i);
+                stck.mergeNonNull(stock);
+                watchingStocks.set(i, stck);
+                BackgroundTaskHandler.myDb.updateCurrent(stck);
                 return;
             }
         }

@@ -30,12 +30,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/watchProgram"
+            android:id="@+id/currentStonks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:onClick="onWatchCurrentStonksClick"
             android:text="@string/currentStonks"
+            android:textSize="10sp"
             android:background="@drawable/main_activity_buttons_style"
+            android:drawableTop="@drawable/ic_baseline_trending_up_36"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/manageFavourites"
@@ -45,9 +47,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/favourites"
+            android:textSize="10sp"
             android:onClick="onManageFavouriteStonksClick"
             android:background="@drawable/main_activity_buttons_style"
-            app:layout_constraintStart_toEndOf="@+id/watchProgram"
+            android:drawableTop="@drawable/ic_baseline_star_36"
+            app:layout_constraintStart_toEndOf="@+id/currentStonks"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

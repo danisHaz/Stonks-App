@@ -3,6 +3,9 @@ package com.example.stonksapp.UI.Components;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.Components.SymbolQuery;
 import com.example.stonksapp.Constants;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.example.stonksapp.financial.SimpleStockTransporter;
 
 import android.database.MatrixCursor;
 
@@ -37,12 +40,20 @@ public class CustomMatrixCursor {
         String[] descriptionResult = resultQuery
                 .getArrayOf(SymbolQuery.DESCRIPTION_TYPE);
 
+        Gson gson = new GsonBuilder().create();
+        String[] result = new String[symbolResult.length];
+        for (int pos = 0; pos < symbolResult.length; pos++) {
+            SimpleStockTransporter transporter = new SimpleStockTransporter(symbolResult[pos],
+                    descriptionResult[pos]);
+            result[pos] = gson.toJson(transporter, SimpleStockTransporter.class);
+        }
+
         Object[][] res = new Object[symbolResult.length][3];
 
         for (int pos = 0; pos < symbolResult.length; pos++) {
             res[pos][0] = pos;
             res[pos][1] = descriptionResult[pos];
-            res[pos][2] = symbolResult[pos];
+            res[pos][2] = result[pos];
             pos++;
         }
 

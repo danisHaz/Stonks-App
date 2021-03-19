@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -23,9 +24,7 @@ import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.financial.Components.FavouriteStock;
 import com.example.stonksapp.financial.Components.WatchingStocks;
-import com.example.stonksapp.financial.TradesPrices;
 
-import java.util.ArrayList;
 import java.lang.NullPointerException;
 
 public class WatchCurrentStonksFragment extends Fragment {
@@ -76,19 +75,24 @@ public class WatchCurrentStonksFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        recyclerView.setAdapter(new CustomItemAdapter(getArguments()));
+        CustomItemAdapter adapter = new CustomItemAdapter(getArguments());
+        recyclerView.setAdapter(adapter);
     }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
         final TextView cell;
         final TextView priceCell;
         final CheckBox button;
+        final TextView description;
+        final ConstraintLayout linearLayout;
 
         CustomViewHolder(@NonNull View v) {
             super(v);
             cell = (TextView) v.findViewById(R.id.simpleTextView);
             priceCell = (TextView) v.findViewById(R.id.priceTextView);
             button = (CheckBox) v.findViewById(R.id.setFavouriteButton);
+            description = (TextView) v.findViewById(R.id.descriptionTextView);
+            linearLayout = (ConstraintLayout) v.findViewById(R.id.simpleLinearLayout);
         }
     }
 
@@ -110,7 +114,13 @@ public class WatchCurrentStonksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, final int pos) {
             try {
+                if (pos % 2 == 1)
+                    holder.linearLayout.setBackgroundResource(R.drawable.simple_text_view_background);
+                else
+                    holder.linearLayout.setBackgroundResource(R.drawable.simple_text_view_default);
                 holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
+                holder.description.setText(WatchingStocks.watchingStocks.get(pos).name == null ?
+                        "Company Name": WatchingStocks.watchingStocks.get(pos).name);
                 holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
                 holder.button.setChecked(FavouriteStock.isInFavourites(
                         WatchingStocks.watchingStocks.get(pos)) != -1);

@@ -27,13 +27,13 @@ public class BackgroundTaskHandler {
         myDb = StockDataBase.createInstance(mActivity);
     }
 
-    private static void createConnection() {
+    public static void createConnection() {
         client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
                 activity);
         client.connect();
     }
 
-    private static void destroyConnection() {
+    public static void destroyConnection() {
         client.disconnect();
         client = null;
     }
@@ -74,9 +74,6 @@ public class BackgroundTaskHandler {
     public static void unsubscribeFromLastPriceUpdates(String[] arr) {
         scheduleJob(ChangeCurrentPricesService.class, activity,
                 Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID, arr);
-
-        if (client != null)
-            destroyConnection();
     }
 
 }

@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String attachedFragmentTag = Constants.WATCH_STONKS_TAG;
+    public static boolean ifNothingAttached = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(properContentView);
 
         if (properContentView == R.layout.activity_main && savedInstanceState == null) {
+            if (BackgroundTaskHandler.myDb != null)
+                return;
+
             BackgroundTaskHandler.defineDB(this);
             WatchingStocks.define(this);
             FavouriteStock.define();
@@ -59,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
             setSupportActionBar(mToolbar);
 
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(Constants.toStringArray(FavouriteStock.getSymbols()));
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(Constants.toStringArray(WatchingStocks.getSymbols()));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                    Constants.toStringArray(WatchingStocks.getSymbols()));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                    Constants.toStringArray(FavouriteStock.getSymbols()));
         }
 
     }
@@ -74,9 +81,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
+                Constants.toStringArray(FavouriteStock.getSymbols()));
+        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
+                Constants.toStringArray(WatchingStocks.getSymbols()));
+        BackgroundTaskHandler.destroyConnection();
 
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(Constants.toStringArray(FavouriteStock.getSymbols()));
-        BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(Constants.toStringArray(WatchingStocks.getSymbols()));
     }
 
     @Override
@@ -128,12 +138,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onWatchCurrentStonksClick(View view) {
+        Button button = (Button) view;
+        button.setCompoundDrawablesRelativeWithIntrinsicBounds(0,
+                R.drawable.ic_baseline_trending_up_36, 0, 0);
+
+        ((Button)findViewById(R.id.manageFavourites))
+                .setCompoundDrawablesRelativeWithIntrinsicBounds(0,
+                        R.drawable.ic_baseline_star_36, 0, 0);
+
         FragmentContainerView fragment = (FragmentContainerView) findViewById(R.id.frag);
         if (fragment.getTag() != Constants.WATCH_STONKS_TAG)
             this.setWatchCurrentStonksFragment();
     }
 
     public void onManageFavouriteStonksClick(View view) {
+        Button button = (Button) view;
+        button.setCompoundDrawablesRelativeWithIntrinsicBounds(0,
+                R.drawable.ic_baseline_star_36_enabled, 0, 0);
+
+        ((Button)findViewById(R.id.currentStonks))
+                .setCompoundDrawablesRelativeWithIntrinsicBounds(0,
+                        R.drawable.ic_baseline_trending_up_36_disabled, 0, 0);
+
         FragmentContainerView fragment = (FragmentContainerView) findViewById(R.id.frag);
         if (fragment.getTag() != Constants.MANAGE_YOUR_FAVOURITES_TAG)
             this.setManageFavouritesStonksFragment();
