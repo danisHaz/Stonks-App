@@ -9,6 +9,9 @@ and keeping some of them as favourites for convenient tracking.
 - [Finnhub API](https://finnhub.io/)
 - [nv-websocket-client](https://github.com/TakahikoKawasaki/nv-websocket-client)
 
+## Screenshots:
+<img src="./screenshots/screenshot_main.jpg" alt="drawing" width="200" height="400"/> <img src="./screenshots/screenshot_favourite.jpg" alt="drawing" width="200" height="400"/>
+
 ## Communication
 Send an e-mail to danisHaz112345@gmail.com for communication.
 
