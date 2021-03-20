@@ -3,6 +3,7 @@ package com.example.stonksapp.financial.Network;
 import com.example.stonksapp.financial.Components.SymbolQuery;
 import com.example.stonksapp.financial.StockSymbolsArray;
 import com.example.stonksapp.financial.StockSymbol;
+import com.example.stonksapp.financial.Quote;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
@@ -124,6 +125,52 @@ public class HTTPSRequestClient {
                         e.printStackTrace();
                     } catch (IOException e) {
                         Log.d("Err", "IOException occurred in symbol lookup");
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        Log.d("Err", "json format is wrong");
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return res[0];
+        }
+
+        public Quote quote(final String url) {
+            final Quote[] res = new Quote[1];
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        BufferedReader reader = getJSONinString(url);
+                        if (reader == null)
+                            return;
+
+                        String jsonMessage = "";
+                        String str;
+
+                        while ((str = reader.readLine()) != null) {
+                            jsonMessage += str;
+                        }
+                        reader.close();
+
+                        Gson gson = (new GsonBuilder()).create();
+
+                        res[0] = gson.fromJson(jsonMessage, Quote.class);
+
+                    } catch (MalformedURLException e) {
+                        Log.d("Err", "Provided wrong URL in quote");
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.d("Err", "IOException occurred in quote");
                         e.printStackTrace();
                     } catch (IllegalStateException e) {
                         Log.d("Err", "json format is wrong");

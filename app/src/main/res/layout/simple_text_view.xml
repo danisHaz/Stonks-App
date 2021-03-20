@@ -38,21 +38,35 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <TextView
-        android:id="@+id/priceTextView"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:paddingStart="20dp"
-        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
         android:paddingTop="5dp"
+        android:paddingEnd="30dp"
         android:paddingBottom="5dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="@string/helloThere"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/setFavouriteButton"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:id="@+id/priceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:text="@string/helloThere"
+            />
+
+        <TextView
+            android:id="@+id/changePriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/helloThere"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/setFavouriteButton"
