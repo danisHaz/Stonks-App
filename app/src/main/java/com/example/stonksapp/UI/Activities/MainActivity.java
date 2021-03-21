@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             if (BackgroundTaskHandler.myDb != null)
                 return;
 
+            BackgroundTaskHandler.createConnection(this);
             BackgroundTaskHandler.defineDB(this);
             WatchingStocks.define(this);
             FavouriteStock.define();
@@ -65,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(mToolbar);
 
             BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                    Constants.toStringArray(WatchingStocks.getSymbols()));
+                    Constants.toStringArray(WatchingStocks.getSymbols()), this);
             BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                    Constants.toStringArray(FavouriteStock.getSymbols()));
+                    Constants.toStringArray(FavouriteStock.getSymbols()), this);
         }
 
     }
@@ -82,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
-                Constants.toStringArray(FavouriteStock.getSymbols()));
+                Constants.toStringArray(FavouriteStock.getSymbols()), this);
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
-                Constants.toStringArray(WatchingStocks.getSymbols()));
+                Constants.toStringArray(WatchingStocks.getSymbols()), this);
         BackgroundTaskHandler.destroyConnection();
 
     }

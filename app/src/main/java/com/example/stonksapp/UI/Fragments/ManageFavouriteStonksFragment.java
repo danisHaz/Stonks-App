@@ -4,7 +4,9 @@ import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.financial.Components.Stock;
 import com.example.stonksapp.financial.Components.FavouriteStock;
+import com.example.stonksapp.financial.Components.WatchingStocks;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -28,16 +30,16 @@ import java.lang.NullPointerException;
 
 public class ManageFavouriteStonksFragment extends Fragment {
     private CustomAdapter adapter;
-    private AppCompatActivity activity;
+    private static AppCompatActivity activity;
 
     public ManageFavouriteStonksFragment() {
         // Required empty public constructor
     }
 
     public static ManageFavouriteStonksFragment createInstance(
-            @Nullable Bundle bundle, @NonNull AppCompatActivity activity) {
+            @Nullable Bundle bundle, @NonNull AppCompatActivity mActivity) {
         ManageFavouriteStonksFragment fragment = new ManageFavouriteStonksFragment();
-        fragment.activity = activity;
+        activity = mActivity;
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -96,6 +98,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
         final CheckBox button;
         final TextView description;
         final ConstraintLayout constraintLayout;
+        final TextView percents;
 
         CustomViewHolder(@NonNull View view) {
             super(view);
@@ -104,6 +107,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
             button = (CheckBox) view.findViewById(R.id.setFavouriteButton);
             description = (TextView) view.findViewById(R.id.descriptionTextView);
             constraintLayout = (ConstraintLayout) view.findViewById(R.id.simpleLinearLayout);
+            percents = (TextView) view.findViewById(R.id.changePriceTextView);
         }
     }
 
@@ -127,6 +131,16 @@ public class ManageFavouriteStonksFragment extends Fragment {
                         "Company Name": FavouriteStock.currentFavourites.get(pos).name);
                 holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
                 holder.button.setChecked(!FavouriteStock.isInDelayedDeletion(pos));
+                holder.percents.setText(FavouriteStock.currentFavourites.get(pos).percents);
+                if (Double.parseDouble(FavouriteStock.currentFavourites.get(pos).percents) < 0) {
+                    holder.percents.setText(String.format(
+                            "%s%%", FavouriteStock.currentFavourites.get(pos).percents));
+                    holder.percents.setTextColor(activity.getResources().getColor(R.color.myRed));
+                } else {
+                    holder.percents.setText(String.format(
+                            "+%s%%", FavouriteStock.currentFavourites.get(pos).percents));
+                    holder.percents.setTextColor(activity.getResources().getColor(R.color.myGreen));
+                }
             } catch (NullPointerException e) {
                 Log.e("Err", "Current favourites is not valid");
                 e.printStackTrace();

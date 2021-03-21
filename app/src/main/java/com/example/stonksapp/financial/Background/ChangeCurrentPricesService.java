@@ -1,11 +1,13 @@
 package com.example.stonksapp.financial.Background;
 import com.example.stonksapp.Constants;
 
+import android.annotation.SuppressLint;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 
 import java.lang.Thread;
 
+@SuppressLint("SpecifyJobSchedulerIdRange")
 public class ChangeCurrentPricesService extends JobService{
 
     public ChangeCurrentPricesService() { }

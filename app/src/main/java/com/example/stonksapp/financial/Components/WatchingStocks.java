@@ -1,8 +1,8 @@
 package com.example.stonksapp.financial.Components;
 
 import com.example.stonksapp.Constants;
-import com.example.stonksapp.UI.Activities.MainActivity;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
+import com.example.stonksapp.financial.Background.MainReceiver;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.StockSymbol;
 
@@ -16,14 +16,14 @@ import java.util.List;
 
 public class WatchingStocks implements FavouriteObject {
     public static List<Stock> watchingStocks = new ArrayList<>();
-    private static MainActivity activity;
+    private static HTTPSRequestClient.GET getter;
 
     @Override
     public void setFavourite() { }
 
-    public static void define(MainActivity mActivity) {
-        activity = mActivity;
+    public static void define(Context mActivity) {
         SharedPreferences prefs = mActivity.getSharedPreferences(Constants.WATCH_STONKS_TAG, Context.MODE_PRIVATE);
+        getter = new HTTPSRequestClient.GET();
 
         if (!prefs.getBoolean("isFirstBoot", true))
             BackgroundTaskHandler.myDb.getAll(WatchingStocks.class);
@@ -46,7 +46,7 @@ public class WatchingStocks implements FavouriteObject {
                 Toast.makeText(mActivity, "XNGS not working", Toast.LENGTH_LONG).show();
             }
 
-            // todo: enable alarm
+            MainReceiver.enableAlarm(mActivity);
 
             SharedPreferences.Editor pprefs =  prefs.edit();
             pprefs.putBoolean("isFirstBoot", false);
@@ -85,6 +85,7 @@ public class WatchingStocks implements FavouriteObject {
             }
         }
 
+        stock.countPercentage(getter);
         watchingStocks.add(stock);
         BackgroundTaskHandler.myDb.insertCurrent(stock);
     }

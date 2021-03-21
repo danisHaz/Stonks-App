@@ -1,5 +1,8 @@
 package com.example.stonksapp.financial.Components;
 
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.financial.Network.HTTPSRequestClient;
+import com.example.stonksapp.financial.Quote;
 import com.example.stonksapp.financial.TradesPrices;
 import com.example.stonksapp.financial.TradesData;
 import com.example.stonksapp.financial.Components.SymbolQuery.SingleResult;
@@ -15,8 +18,13 @@ import androidx.room.ColumnInfo;
 
 import java.lang.Comparable;
 
+import android.util.Log;
+
 @Entity
 public class Stock implements Comparable<Stock> {
+    @Ignore
+    private static HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
+
     @ColumnInfo(name="country")
     @SerializedName("country")
     public String country;
@@ -65,6 +73,10 @@ public class Stock implements Comparable<Stock> {
     @ColumnInfo(name="price")
     public String price;
 
+    @Ignore
+    @ColumnInfo(name="percents")
+    public String percents;
+
     // ???
     @ColumnInfo(name="finnhubIndustry")
     @SerializedName("finnhubIndustry")
@@ -74,6 +86,8 @@ public class Stock implements Comparable<Stock> {
         this.symbol = symbol;
         this.country = country;
         this.price = "N/A";
+
+        countPercentage(getter);
     }
 
     @Ignore
@@ -85,6 +99,8 @@ public class Stock implements Comparable<Stock> {
         this.symbol = symbol;
         this.country = country;
         this.price = price;
+
+        countPercentage(getter);
     }
 
     @Ignore
@@ -93,15 +109,38 @@ public class Stock implements Comparable<Stock> {
         this.name = name;
         this.country = country;
         this.price = price;
+
+        countPercentage(getter);
+    }
+
+    @Ignore
+    public void countPercentage(HTTPSRequestClient.GET getter) {
+        if (getter == null) {
+            Log.e("Err", "Request client is null when count percentage");
+            return;
+        }
+
+        try {
+            Quote quote = getter.quote(String.format(
+                    Constants.GET_QUOTE_TEMPLATE, symbol, Constants.API_TOKEN));
+            double myPercents =
+                    ((Double.parseDouble(quote.current)) / (Double.parseDouble(quote.previous)) - (double) 1) * 100;
+            percents = String.format("%.2f", myPercents);
+            price = quote.current;
+        } catch (NullPointerException e) {
+            Log.e("Err", "Some symbol not found");
+        }
     }
 
     @Ignore
     public void mergeNonNull(Stock stock) {
-        this.capitalization = stock.capitalization == null ? this.capitalization : stock.capitalization;
+        this.capitalization = stock.capitalization == null ?
+                this.capitalization : stock.capitalization;
         this.country = stock.country == null ? this.country : stock.country;
         this.currency = stock.currency == null ? this.currency : stock.currency;
         this.exchange = stock.exchange == null ? this.exchange : stock.exchange;
-        this.finnhubIndustry = stock.finnhubIndustry == null ? this.finnhubIndustry : stock.finnhubIndustry;
+        this.finnhubIndustry = stock.finnhubIndustry == null ?
+                this.finnhubIndustry : stock.finnhubIndustry;
         this.ipo = stock.ipo == null ? this.ipo : stock.ipo;
         this.logo = stock.logo == null ? this.logo : stock.logo;
         this.name = stock.name == null ? this.name : stock.name;
@@ -110,6 +149,7 @@ public class Stock implements Comparable<Stock> {
         this.price = stock.price == null ? this.price : stock.price;
         this.symbol = stock.symbol;
         this.url = stock.url == null ? this.url : stock.url;
+        this.percents = stock.percents == null ? this.percents : stock.percents;
     }
 
     @Ignore
@@ -140,6 +180,9 @@ public class Stock implements Comparable<Stock> {
         defStock.price = stock.price;
         defStock.symbol = stock.symbol;
         defStock.url = stock.url;
+        if (stock.percents == null)
+            defStock.countPercentage(getter);
+        defStock.percents = stock.percents;
 
         return defStock;
     }

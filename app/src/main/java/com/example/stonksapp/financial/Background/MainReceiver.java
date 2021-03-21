@@ -1,7 +1,5 @@
 package com.example.stonksapp.financial.Background;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +13,6 @@ import androidx.work.PeriodicWorkRequest;
 
 import com.example.stonksapp.Constants;
 
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class MainReceiver extends BroadcastReceiver {
@@ -23,7 +20,7 @@ public class MainReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)
                 || intent.getAction().equals(Constants.ACTION_QUOTE)) {
             enableAlarm(context);
         }
@@ -38,7 +35,7 @@ public class MainReceiver extends BroadcastReceiver {
                 .setRequiresCharging(false)
                 .build();
 
-        WorkRequest request = new PeriodicWorkRequest.Builder(SendDailyQouteWork.class,
+        WorkRequest request = new PeriodicWorkRequest.Builder(SendDailyQuoteWork.class,
                 repeatIntervalInDays,
                 TimeUnit.DAYS)
                 .setConstraints(constrs)

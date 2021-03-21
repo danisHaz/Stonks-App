@@ -1,5 +1,6 @@
 package com.example.stonksapp.UI.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -28,7 +29,7 @@ import com.example.stonksapp.financial.Components.WatchingStocks;
 import java.lang.NullPointerException;
 
 public class WatchCurrentStonksFragment extends Fragment {
-    private AppCompatActivity innerContext;
+    private static AppCompatActivity innerContext;
 
     public WatchCurrentStonksFragment() {
         // Required empty public constructor
@@ -37,7 +38,7 @@ public class WatchCurrentStonksFragment extends Fragment {
     public static WatchCurrentStonksFragment createInstance(@Nullable Bundle bundle,
                                                             @NonNull AppCompatActivity context) {
         WatchCurrentStonksFragment frag =  new WatchCurrentStonksFragment();
-        frag.innerContext = context;
+        innerContext = context;
 
         frag.setArguments(bundle);
         return frag;
@@ -45,7 +46,8 @@ public class WatchCurrentStonksFragment extends Fragment {
 
     public int updateAndRefresh() {
         Log.d("Current", "Trying to update");
-        FragmentTransaction transaction = innerContext.getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = innerContext
+                .getSupportFragmentManager().beginTransaction();
         try {
             Fragment fragg = innerContext.getSupportFragmentManager()
                     .findFragmentByTag(Constants.WATCH_STONKS_TAG);
@@ -85,6 +87,7 @@ public class WatchCurrentStonksFragment extends Fragment {
         final CheckBox button;
         final TextView description;
         final ConstraintLayout linearLayout;
+        final TextView percents;
 
         CustomViewHolder(@NonNull View v) {
             super(v);
@@ -93,6 +96,7 @@ public class WatchCurrentStonksFragment extends Fragment {
             button = (CheckBox) v.findViewById(R.id.setFavouriteButton);
             description = (TextView) v.findViewById(R.id.descriptionTextView);
             linearLayout = (ConstraintLayout) v.findViewById(R.id.simpleLinearLayout);
+            percents = (TextView) v.findViewById(R.id.changePriceTextView);
         }
     }
 
@@ -100,7 +104,6 @@ public class WatchCurrentStonksFragment extends Fragment {
         private int argCount;
 
         CustomItemAdapter(Bundle bundle) {
-            // provide some code
             argCount = WatchingStocks.watchingStocks.size();
         }
 
@@ -124,6 +127,15 @@ public class WatchCurrentStonksFragment extends Fragment {
                 holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
                 holder.button.setChecked(FavouriteStock.isInFavourites(
                         WatchingStocks.watchingStocks.get(pos)) != -1);
+                if (Double.parseDouble(WatchingStocks.watchingStocks.get(pos).percents) < 0) {
+                    holder.percents.setText(String.format("%s%%", WatchingStocks.watchingStocks.get(pos).percents));
+                    holder.percents
+                            .setTextColor(innerContext.getResources().getColor(R.color.myRed));
+                } else {
+                    holder.percents.setText(String.format("+%s%%", WatchingStocks.watchingStocks.get(pos).percents));
+                    holder.percents
+                            .setTextColor(innerContext.getResources().getColor(R.color.myGreen));
+                }
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.d("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();

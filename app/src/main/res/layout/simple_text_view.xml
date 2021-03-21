@@ -10,6 +10,7 @@
     android:gravity="center">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/firstLinearLayout"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,11 +48,13 @@
         android:paddingEnd="30dp"
         android:paddingBottom="5dp"
         app:layout_constraintEnd_toStartOf="@+id/setFavouriteButton"
+        app:layout_constraintStart_toEndOf="@+id/firstLinearLayout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5">
         <TextView
             android:id="@+id/priceTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -60,7 +63,7 @@
 
         <TextView
             android:id="@+id/changePriceTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:text="@string/helloThere"
