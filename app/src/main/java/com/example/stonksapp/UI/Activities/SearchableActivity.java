@@ -95,7 +95,7 @@ public class SearchableActivity extends AppCompatActivity {
 
             try {
                 FavouriteStock.addToFavourites(new Stock(transporter.symbol, transporter.description, "US", null));
-                BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup});
+                BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup}, this);
             } catch (java.lang.NullPointerException e) {
                 Log.e("Err", "Chosen symbol in suggestions is null");
             }
@@ -160,7 +160,7 @@ public class SearchableActivity extends AppCompatActivity {
                                 list.get(pos).name,"US", null));
 
                         BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                                new String[]{list.get(pos).symbol});
+                                new String[]{list.get(pos).symbol}, SearchableActivity.activity);
                         activity.finish();
                     }
                 });

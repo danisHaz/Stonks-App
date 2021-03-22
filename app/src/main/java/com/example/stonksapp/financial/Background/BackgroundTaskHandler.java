@@ -15,19 +15,22 @@ import android.os.PersistableBundle;
 public class BackgroundTaskHandler {
     private static int currJobNum = 0;
     private static WebSocketClient client;
-    private static MainActivity activity;
     public static StockDataBase myDb;
 
     public static WebSocketClient getClient() { return client; }
 
-    public static void defineDB(MainActivity mActivity) {
+    public static void defineDB(Context mActivity) {
         if (myDb != null)
             return;
-        activity = mActivity;
         myDb = StockDataBase.createInstance(mActivity);
     }
 
-    public static void createConnection() {
+    public static void createConnection(MainActivity activity) {
+        if (client != null) {
+            Log.e("Err", "connection already exists");
+            return;
+        }
+
         client = new WebSocketClient(Constants.MAIN_API_URI + Constants.API_TOKEN,
                 activity);
         client.connect();
@@ -62,17 +65,15 @@ public class BackgroundTaskHandler {
         }
     }
 
-    public static void subscribeOnLastPriceUpdates(String[] arr) {
-        if (client == null)
-            createConnection();
+    public static void subscribeOnLastPriceUpdates(String[] arr, Context context) {
 
-        scheduleJob(ChangeCurrentPricesService.class, activity,
+        scheduleJob(ChangeCurrentPricesService.class, context,
                 Constants.SUBSCRIBE_LAST_PRICE_UPDATES_ID, arr);
     }
 
 
-    public static void unsubscribeFromLastPriceUpdates(String[] arr) {
-        scheduleJob(ChangeCurrentPricesService.class, activity,
+    public static void unsubscribeFromLastPriceUpdates(String[] arr, Context context) {
+        scheduleJob(ChangeCurrentPricesService.class, context,
                 Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID, arr);
     }
 

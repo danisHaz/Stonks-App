@@ -19,12 +19,15 @@ import java.util.List;
 
 public class StockDataBase {
     private StockDB mDb;
+    private static StockDataBase dataBase;
     private static int initializeNumber = 0;
 
-    public static StockDataBase createInstance(Context context) {
-        StockDataBase dataBase = new StockDataBase();
-        dataBase.mDb = Room.databaseBuilder(context, StockDB.class,
-                String.format("%dDataBase", StockDataBase.initializeNumber++)).build();
+    public static synchronized StockDataBase createInstance(Context context) {
+        if (dataBase == null) {
+            dataBase = new StockDataBase();
+            dataBase.mDb = Room.databaseBuilder(context, StockDB.class,
+                    String.format("%dDataBase", StockDataBase.initializeNumber++)).build();
+        }
         return dataBase;
     }
 
@@ -100,6 +103,9 @@ public class StockDataBase {
                 } else if (objClass == WatchingStocks.class) {
                     List<DefaultStock> defList = mDb.currentDao().getAll();
                     for (DefaultStock stockie: defList) {
+                        Stock stck = Stock.from(stockie);
+                        if (stck.price == null)
+                            Log.e("qewqew", "qweqw");
                         WatchingStocks.watchingStocks.add(Stock.from(stockie));
                     }
                 }

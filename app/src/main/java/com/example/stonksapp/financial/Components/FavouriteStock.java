@@ -3,14 +3,16 @@ package com.example.stonksapp.financial.Components;
 import android.util.Log;
 
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
+import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
 public class FavouriteStock implements FavouriteObject {
-    public static List<Stock> currentFavourites = new ArrayList<>();
+    public static volatile List<Stock> currentFavourites = new ArrayList<>();
     private static TreeSet<Stock> delayedDelete = new TreeSet<>();
+    private static HTTPSRequestClient.GET getter;
 
     @Override
     public void setFavourite() {
@@ -18,6 +20,8 @@ public class FavouriteStock implements FavouriteObject {
     }
 
     public static void define() {
+        if (getter == null)
+            getter = new HTTPSRequestClient.GET();
         BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
     }
 
@@ -83,6 +87,7 @@ public class FavouriteStock implements FavouriteObject {
             return;
         }
 
+        stock.countPercentage(getter);
         currentFavourites.add(stock);
         BackgroundTaskHandler.myDb.insertFavourite(stock);
     }
@@ -98,6 +103,12 @@ public class FavouriteStock implements FavouriteObject {
             }
         }
 
+    }
+
+    public static void saveToDataBase() {
+        for (Stock stock: currentFavourites) {
+            BackgroundTaskHandler.myDb.updateFavourite(stock);
+        }
     }
 
     public static void deleteFromFavourites(Stock stock) {

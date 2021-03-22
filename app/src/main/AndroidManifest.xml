@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -13,11 +14,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <receiver
+            android:name=".financial.Background.MainReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="com.example.stonksapp.ACTION_QUOTE"/>
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name=".UI.Components.SuggestionsContentProvider"
             android:authorities="com.example.stonksapp.mContentProvider"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <activity
             android:name=".UI.Activities.SearchableActivity"
@@ -30,6 +42,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <activity android:name=".UI.Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

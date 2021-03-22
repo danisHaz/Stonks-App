@@ -8,6 +8,7 @@ public class Constants {
     public static final String NOTHING_ATTACHED_TAG = "nothingAttachedTag";
     public static final String MAIN_API_URI = "wss://ws.finnhub.io?token=";
     public static final String API_TOKEN = "c12ht2f48v6oi252p5ag";
+    public static final String ACTION_QUOTE = "com.example.stonksapp.ACTION_QUOTE";
     public static final String SUBSCRIBE_LAST_PRICE_UPDATES_JSON_TEMPLATE =
             "{\"type\": \"subscribe\", \"symbol\": \"%s\"}";
 
@@ -19,6 +20,8 @@ public class Constants {
 
     public static final String GET_SYMBOL_LOOKUP_TEMPLATE =
             "https://finnhub.io/api/v1/search?q=%s&token=%s";
+
+    public static final String GET_QUOTE_TEMPLATE = "https://finnhub.io/api/v1/quote?symbol=%s&token=%s";
 
     public static final byte SUBSCRIBE_LAST_PRICE_UPDATES_ID = 0;
     public static final byte UNSUBSCRIBE_LAST_PRICE_UPDATES_ID = 1;

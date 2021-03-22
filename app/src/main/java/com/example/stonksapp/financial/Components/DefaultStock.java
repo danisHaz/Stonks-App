@@ -1,15 +1,23 @@
 package com.example.stonksapp.financial.Components;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.financial.Network.HTTPSRequestClient;
+import com.example.stonksapp.financial.Quote;
 import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class DefaultStock {
+    @Ignore
+    public static HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
+
     @ColumnInfo(name="country")
     @SerializedName("country")
     public String country;
@@ -58,6 +66,10 @@ public class DefaultStock {
     @ColumnInfo(name="price")
     public String price;
 
+    @ColumnInfo(name="percents")
+    public String percents;
+
+
     // ???
     @ColumnInfo(name="finnhubIndustry")
     @SerializedName("finnhubIndustry")
@@ -79,6 +91,9 @@ public class DefaultStock {
         defStock.price = stock.price;
         defStock.symbol = stock.symbol;
         defStock.url = stock.url;
+        defStock.percents = stock.percents;
+        if (stock.percents == null)
+            defStock.countPercentage(getter);
 
         return defStock;
     }
@@ -89,6 +104,26 @@ public class DefaultStock {
     public DefaultStock(@NonNull String symbol, @NonNull String country) {
         this.symbol = symbol;
         this.country = country;
+        countPercentage(getter);
+    }
+
+    @Ignore
+    public void countPercentage(HTTPSRequestClient.GET getter) {
+        if (getter == null) {
+            Log.e("Err", "Request client is null when count percentage");
+            return;
+        }
+
+        try {
+            Quote quote = getter.quote(String.format(
+                    Constants.GET_QUOTE_TEMPLATE, symbol, Constants.API_TOKEN));
+            double myPercents =
+                    ((Double.parseDouble(quote.current)) / (Double.parseDouble(quote.previous)) - (double) 1) * 100;
+            percents = String.format("%.2f", myPercents);
+            price = quote.current;
+        } catch (NullPointerException e) {
+            Log.e("Err", "Some symbol not found");
+        }
     }
 
 }
