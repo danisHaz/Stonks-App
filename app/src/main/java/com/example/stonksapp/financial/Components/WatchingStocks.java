@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WatchingStocks implements FavouriteObject {
-    public static List<Stock> watchingStocks = new ArrayList<>();
+    public static volatile List<Stock> watchingStocks = new ArrayList<>();
     private static HTTPSRequestClient.GET getter;
 
     @Override
@@ -23,14 +23,14 @@ public class WatchingStocks implements FavouriteObject {
 
     public static void define(Context mActivity) {
         SharedPreferences prefs = mActivity.getSharedPreferences(Constants.WATCH_STONKS_TAG, Context.MODE_PRIVATE);
-        getter = new HTTPSRequestClient.GET();
+        if (getter == null)
+            getter = new HTTPSRequestClient.GET();
 
         if (!prefs.getBoolean("isFirstBoot", true))
             BackgroundTaskHandler.myDb.getAll(WatchingStocks.class);
         else {
-            HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
             StockSymbol[] a = getter.StockSymbols(String.format(
-                    Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", "XNGS", Constants.API_TOKEN));
+                    Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", "XNAS", Constants.API_TOKEN));
 
             for (int i = 0; i < java.lang.Math.min(a.length, 10); i++) {
                 insert(new Stock(a[i].symbol, a[i].description, a[i].currency, null));
@@ -63,6 +63,12 @@ public class WatchingStocks implements FavouriteObject {
         }
 
         return symbolsList;
+    }
+
+    public static void saveToDataBase() {
+        for (int i = 0; i < watchingStocks.size(); i++) {
+            BackgroundTaskHandler.myDb.updateCurrent(watchingStocks.get(i));
+        }
     }
 
     public static void update(Stock stock) {

@@ -31,14 +31,17 @@ import java.lang.NullPointerException;
 public class ManageFavouriteStonksFragment extends Fragment {
     private CustomAdapter adapter;
     private static AppCompatActivity activity;
+    private static ManageFavouriteStonksFragment fragment;
 
     public ManageFavouriteStonksFragment() {
         // Required empty public constructor
     }
 
-    public static ManageFavouriteStonksFragment createInstance(
+    public static synchronized ManageFavouriteStonksFragment createInstance(
             @Nullable Bundle bundle, @NonNull AppCompatActivity mActivity) {
-        ManageFavouriteStonksFragment fragment = new ManageFavouriteStonksFragment();
+        if (fragment == null)
+            fragment = new ManageFavouriteStonksFragment();
+
         activity = mActivity;
         fragment.setArguments(bundle);
         return fragment;
@@ -132,7 +135,8 @@ public class ManageFavouriteStonksFragment extends Fragment {
                 holder.priceCell.setText(FavouriteStock.currentFavourites.get(pos).price);
                 holder.button.setChecked(!FavouriteStock.isInDelayedDeletion(pos));
                 holder.percents.setText(FavouriteStock.currentFavourites.get(pos).percents);
-                if (Double.parseDouble(FavouriteStock.currentFavourites.get(pos).percents) < 0) {
+                if (FavouriteStock.currentFavourites.get(pos).percents != null
+                        && Double.parseDouble(FavouriteStock.currentFavourites.get(pos).percents) < 0) {
                     holder.percents.setText(String.format(
                             "%s%%", FavouriteStock.currentFavourites.get(pos).percents));
                     holder.percents.setTextColor(activity.getResources().getColor(R.color.myRed));

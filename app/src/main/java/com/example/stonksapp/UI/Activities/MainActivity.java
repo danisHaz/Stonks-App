@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+//        WatchingStocks.saveToDataBase();
+//        FavouriteStock.saveToDataBase();
+
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
                 Constants.toStringArray(FavouriteStock.getSymbols()), this);
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(

@@ -30,14 +30,17 @@ import java.lang.NullPointerException;
 
 public class WatchCurrentStonksFragment extends Fragment {
     private static AppCompatActivity innerContext;
+    private static WatchCurrentStonksFragment frag;
 
     public WatchCurrentStonksFragment() {
         // Required empty public constructor
     }
 
-    public static WatchCurrentStonksFragment createInstance(@Nullable Bundle bundle,
+    public static synchronized WatchCurrentStonksFragment createInstance(@Nullable Bundle bundle,
                                                             @NonNull AppCompatActivity context) {
-        WatchCurrentStonksFragment frag =  new WatchCurrentStonksFragment();
+        if (frag == null)
+            frag =  new WatchCurrentStonksFragment();
+
         innerContext = context;
 
         frag.setArguments(bundle);
@@ -124,15 +127,19 @@ public class WatchCurrentStonksFragment extends Fragment {
                 holder.cell.setText(WatchingStocks.watchingStocks.get(pos).symbol);
                 holder.description.setText(WatchingStocks.watchingStocks.get(pos).name == null ?
                         "Company Name": WatchingStocks.watchingStocks.get(pos).name);
+
                 holder.priceCell.setText(WatchingStocks.watchingStocks.get(pos).price);
                 holder.button.setChecked(FavouriteStock.isInFavourites(
                         WatchingStocks.watchingStocks.get(pos)) != -1);
-                if (Double.parseDouble(WatchingStocks.watchingStocks.get(pos).percents) < 0) {
-                    holder.percents.setText(String.format("%s%%", WatchingStocks.watchingStocks.get(pos).percents));
+                if (WatchingStocks.watchingStocks.get(pos).percents != null
+                        && Double.parseDouble(WatchingStocks.watchingStocks.get(pos).percents) < 0) {
+                    holder.percents.setText(String.format("%s%%",
+                            WatchingStocks.watchingStocks.get(pos).percents));
                     holder.percents
                             .setTextColor(innerContext.getResources().getColor(R.color.myRed));
                 } else {
-                    holder.percents.setText(String.format("+%s%%", WatchingStocks.watchingStocks.get(pos).percents));
+                    holder.percents.setText(String.format("+%s%%",
+                            WatchingStocks.watchingStocks.get(pos).percents));
                     holder.percents
                             .setTextColor(innerContext.getResources().getColor(R.color.myGreen));
                 }

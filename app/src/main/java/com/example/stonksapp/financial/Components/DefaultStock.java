@@ -16,7 +16,7 @@ import com.google.gson.annotations.SerializedName;
 @Entity
 public class DefaultStock {
     @Ignore
-    HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
+    public static HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
 
     @ColumnInfo(name="country")
     @SerializedName("country")
@@ -66,7 +66,6 @@ public class DefaultStock {
     @ColumnInfo(name="price")
     public String price;
 
-    @Ignore
     @ColumnInfo(name="percents")
     public String percents;
 
@@ -92,9 +91,9 @@ public class DefaultStock {
         defStock.price = stock.price;
         defStock.symbol = stock.symbol;
         defStock.url = stock.url;
-        if (stock.percents == null)
-            stock.countPercentage(new HTTPSRequestClient.GET());
         defStock.percents = stock.percents;
+        if (stock.percents == null)
+            defStock.countPercentage(getter);
 
         return defStock;
     }
