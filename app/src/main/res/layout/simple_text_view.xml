@@ -48,10 +48,8 @@
         android:paddingEnd="30dp"
         android:paddingBottom="5dp"
         app:layout_constraintEnd_toStartOf="@+id/setFavouriteButton"
-        app:layout_constraintStart_toEndOf="@+id/firstLinearLayout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5">
+        app:layout_constraintBottom_toBottomOf="parent">
         <TextView
             android:id="@+id/priceTextView"
             android:layout_width="match_parent"
