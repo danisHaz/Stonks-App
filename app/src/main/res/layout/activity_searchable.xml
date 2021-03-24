@@ -11,15 +11,9 @@
     <include
         layout="@layout/toolbar_main"/>
 
-    <TextView
-        android:id="@+id/yourListView"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_searchable"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/helloThere"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

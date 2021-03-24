@@ -100,43 +100,29 @@ public class HTTPSRequestClient {
         public SymbolQuery symbolLookup(final String url) {
             final SymbolQuery[] res = new SymbolQuery[1];
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        BufferedReader reader = getJSONinString(url);
-                        if (reader == null)
-                            return;
-
-                        String jsonMessage = "";
-                        String str;
-
-                        while ((str = reader.readLine()) != null) {
-                            jsonMessage += str;
-                        }
-                        reader.close();
-
-                        Gson gson = (new GsonBuilder()).create();
-
-                        res[0] = gson.fromJson(jsonMessage, SymbolQuery.class);
-
-                    } catch (MalformedURLException e) {
-                        Log.d("Err", "Provided wrong URL in symbol lookup");
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        Log.d("Err", "IOException occurred in symbol lookup");
-                        e.printStackTrace();
-                    } catch (IllegalStateException e) {
-                        Log.d("Err", "json format is wrong");
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            thread.start();
             try {
-                thread.join();
-            } catch (InterruptedException e) {
+                BufferedReader reader = getJSONinString(url);
+
+                String jsonMessage = "";
+                String str;
+
+                while ((str = reader.readLine()) != null) {
+                    jsonMessage += str;
+                }
+                reader.close();
+
+                Gson gson = (new GsonBuilder()).create();
+
+                res[0] = gson.fromJson(jsonMessage, SymbolQuery.class);
+
+            } catch (MalformedURLException e) {
+                Log.d("Err", "Provided wrong URL in symbol lookup");
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.d("Err", "IOException occurred in symbol lookup");
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                Log.d("Err", "json format is wrong");
                 e.printStackTrace();
             }
 
