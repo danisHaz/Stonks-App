@@ -1,5 +1,6 @@
 package com.example.stonksapp.financial.Network;
 
+import com.example.stonksapp.UI.Activities.MainActivity;
 import com.example.stonksapp.financial.Components.SymbolQuery;
 import com.example.stonksapp.financial.StockSymbolsArray;
 import com.example.stonksapp.financial.StockSymbol;
@@ -25,6 +26,9 @@ public class HTTPSRequestClient {
 
     public static class GET {
         private BufferedReader getJSONinString(String url) {
+            if (!MainActivity.ifNetworkProvided)
+                return null;
+
             BufferedReader reader = null;
             try {
                 URL obj = new URL(url);

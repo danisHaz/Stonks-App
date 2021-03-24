@@ -1,5 +1,6 @@
 package com.example.stonksapp.UI.Activities;
 
+import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Components.OnCompleteListener;
 import com.example.stonksapp.UI.Fragments.LoadingFragment;
@@ -67,7 +68,7 @@ public class SearchableActivity extends AppCompatActivity {
                             .replace(R.id.fragment_searchable, fragment, "fragmentSearchable")
                             .commit();
                 }
-            });
+            }.setTag(Constants.DO_SEARCH_WORK));
 
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             String tup = "AAPL";
