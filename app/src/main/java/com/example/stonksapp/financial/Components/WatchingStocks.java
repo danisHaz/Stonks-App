@@ -1,6 +1,9 @@
 package com.example.stonksapp.financial.Components;
 
 import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.UI.Components.OnCompleteListener;
+import com.example.stonksapp.UI.Components.WorkDoneListener;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Background.MainReceiver;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
@@ -26,9 +29,9 @@ public class WatchingStocks implements FavouriteObject {
         if (getter == null)
             getter = new HTTPSRequestClient.GET();
 
-        if (!prefs.getBoolean("isFirstBoot", true))
+        if (!prefs.getBoolean("isFirstBoot", true)) {
             BackgroundTaskHandler.myDb.getAll(WatchingStocks.class);
-        else {
+        } else {
             StockSymbol[] a = getter.StockSymbols(String.format(
                     Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", "XNAS", Constants.API_TOKEN));
 
@@ -43,7 +46,7 @@ public class WatchingStocks implements FavouriteObject {
                 insert(new Stock("NFLX", "NETFLIX INC", "US", "N/A"));
                 insert(new Stock("TSLA", "TESLA INC", "US", "N/A"));
 
-                Toast.makeText(mActivity, "XNGS not working", Toast.LENGTH_LONG).show();
+                Log.w("WatchingStocks", "XNAS not working");
             }
 
             MainReceiver.enableAlarm(mActivity);
@@ -52,6 +55,13 @@ public class WatchingStocks implements FavouriteObject {
             pprefs.putBoolean("isFirstBoot", false);
             pprefs.apply();
         }
+
+        WorkDoneListener.setNewListener(new OnCompleteListener() {
+            @Override
+            public void doWork() {
+                MainActivity.definitionWorksListener();
+            }
+        }.setTag(Constants.DO_WATCHING_DEFINITION_WORK));
 
     }
 
@@ -86,7 +96,7 @@ public class WatchingStocks implements FavouriteObject {
     public static void insert(Stock stock) {
         for (int i = 0; i < watchingStocks.size(); i++) {
             if (watchingStocks.get(i).symbol.equals(stock.symbol)) {
-                Log.d("Warn", "Provided stock already in current");
+                Log.w("WatchingStocks", "Provided stock already in current");
                 return;
             }
         }

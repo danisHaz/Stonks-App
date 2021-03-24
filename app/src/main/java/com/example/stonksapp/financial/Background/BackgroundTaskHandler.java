@@ -37,7 +37,8 @@ public class BackgroundTaskHandler {
     }
 
     public static void destroyConnection() {
-        client.disconnect();
+        if (client != null)
+            client.disconnect();
         client = null;
     }
 
@@ -73,6 +74,11 @@ public class BackgroundTaskHandler {
 
 
     public static void unsubscribeFromLastPriceUpdates(String[] arr, Context context) {
+        if (client == null) {
+            Log.i("BackgroundTaskHandler", "Connection was not provided");
+            return;
+        }
+
         scheduleJob(ChangeCurrentPricesService.class, context,
                 Constants.UNSUBSCRIBE_LAST_PRICE_UPDATES_ID, arr);
     }

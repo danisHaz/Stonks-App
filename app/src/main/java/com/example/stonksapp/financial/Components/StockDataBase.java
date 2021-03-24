@@ -12,6 +12,10 @@ import androidx.room.Update;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Components.OnCompleteListener;
+import com.example.stonksapp.UI.Components.WorkDoneListener;
+
 import java.lang.Thread;
 import java.lang.NullPointerException;
 import java.lang.Class;
@@ -100,25 +104,20 @@ public class StockDataBase {
                 if (objClass == FavouriteStock.class) {
                     StockDao dao = mDb.stockDao();
                     FavouriteStock.currentFavourites = dao.getAll();
+                    WorkDoneListener.complete(Constants.DO_FAVOURITE_DEFINITION_WORK,
+                            OnCompleteListener.Result.SUCCESS);
                 } else if (objClass == WatchingStocks.class) {
                     List<DefaultStock> defList = mDb.currentDao().getAll();
                     for (DefaultStock stockie: defList) {
-                        Stock stck = Stock.from(stockie);
-                        if (stck.price == null)
-                            Log.e("qewqew", "qweqw");
                         WatchingStocks.watchingStocks.add(Stock.from(stockie));
                     }
+                    WorkDoneListener.complete(Constants.DO_WATCHING_DEFINITION_WORK,
+                            OnCompleteListener.Result.SUCCESS);
                 }
             }
         });
 
         thread.start();
-
-        try {
-            thread.join();
-        } catch (java.lang.InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Dao

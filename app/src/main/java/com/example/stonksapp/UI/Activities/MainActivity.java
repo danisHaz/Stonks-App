@@ -6,6 +6,7 @@ import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Components.*;
+import com.example.stonksapp.UI.Fragments.LoadingFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
@@ -20,12 +21,31 @@ import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
     private static byte defaultFragment = 0;
     private WatchCurrentStonksFragment watchCurrentStonksFragment;
     private ManageFavouriteStonksFragment manageFavouriteStonksFragment;
+    private static volatile int definitionWorksDone = 0;
+    public static boolean ifNetworkProvided;
+    private static MainActivity currentActivity;
+
+    public static synchronized void definitionWorksListener() {
+        if (++definitionWorksDone == 2) {
+            currentActivity.setDefaultFragment();
+
+            if (ifNetworkProvided) {
+                BackgroundTaskHandler.createConnection(currentActivity);
+                BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                        Constants.toStringArray(WatchingStocks.getSymbols()), currentActivity);
+                BackgroundTaskHandler.subscribeOnLastPriceUpdates(
+                        Constants.toStringArray(FavouriteStock.getSymbols()), currentActivity);
+            }
+        }
+    }
 
     public WatchCurrentStonksFragment getWatchStonksFragment() {
         return watchCurrentStonksFragment;
@@ -41,16 +61,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int properContentView = Constants.isNetworkConnectionProvided(this)
-                ? R.layout.activity_main : R.layout.activity_main_no_network;
+        ifNetworkProvided = Constants.isNetworkConnectionProvided(this);
 
-        setContentView(properContentView);
+        setContentView(R.layout.activity_main);
+        currentActivity = this;
 
-        if (properContentView == R.layout.activity_main && savedInstanceState == null) {
+        if (savedInstanceState == null) {
             if (BackgroundTaskHandler.myDb != null)
                 return;
 
-            BackgroundTaskHandler.createConnection(this);
             BackgroundTaskHandler.defineDB(this);
             WatchingStocks.define(this);
             FavouriteStock.define();
@@ -61,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
             manageFavouriteStonksFragment =
                     ManageFavouriteStonksFragment.createInstance(null, this);
 
-            this.setDefaultFragment();
+            LoadingFragment loading = LoadingFragment.createInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.frag, loading, "Loading")
+                    .commit();
+
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
             setSupportActionBar(mToolbar);
-
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                    Constants.toStringArray(WatchingStocks.getSymbols()), this);
-            BackgroundTaskHandler.subscribeOnLastPriceUpdates(
-                    Constants.toStringArray(FavouriteStock.getSymbols()), this);
         }
 
     }
@@ -77,13 +96,14 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        if (!ifNetworkProvided)
+            Toast.makeText(this, "Network is not provided. Please reload app",
+                    Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        WatchingStocks.saveToDataBase();
-//        FavouriteStock.saveToDataBase();
 
         BackgroundTaskHandler.unsubscribeFromLastPriceUpdates(
                 Constants.toStringArray(FavouriteStock.getSymbols()), this);
@@ -96,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        if (!ifNetworkProvided)
+            return super.onCreateOptionsMenu(menu);
 
         MenuItem item = menu.findItem(R.id.searchView);
         SearchView searchView = (SearchView) item.getActionView();
@@ -151,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
                         R.drawable.ic_baseline_star_36, 0, 0);
 
         FragmentContainerView fragment = (FragmentContainerView) findViewById(R.id.frag);
+
+        if (definitionWorksDone != 2) {
+            defaultFragment = 0;
+            return;
+        }
+
         if (fragment.getTag() != Constants.WATCH_STONKS_TAG)
             this.setWatchCurrentStonksFragment();
     }
@@ -165,6 +194,12 @@ public class MainActivity extends AppCompatActivity {
                         R.drawable.ic_baseline_trending_up_36_disabled, 0, 0);
 
         FragmentContainerView fragment = (FragmentContainerView) findViewById(R.id.frag);
+
+        if (definitionWorksDone != 2) {
+            defaultFragment = 1;
+            return;
+        }
+
         if (fragment.getTag() != Constants.MANAGE_YOUR_FAVOURITES_TAG)
             this.setManageFavouritesStonksFragment();
     }

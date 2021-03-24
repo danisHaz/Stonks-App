@@ -57,7 +57,7 @@ public class SearchableFragment extends Fragment {
                 }
 
                 try {
-                    WorkDoneListener.complete(OnCompleteListener.Result.SUCCESS);
+                    WorkDoneListener.complete(Constants.DO_SEARCH_WORK, OnCompleteListener.Result.SUCCESS);
                 } catch (NullPointerException e) {
                     Log.e("Searchable Fragment", "Work is not set");
                 }

@@ -2,8 +2,12 @@ package com.example.stonksapp.financial.Components;
 
 import android.util.Log;
 
+import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.UI.Components.OnCompleteListener;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
+import com.example.stonksapp.UI.Components.WorkDoneListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,13 @@ public class FavouriteStock implements FavouriteObject {
         if (getter == null)
             getter = new HTTPSRequestClient.GET();
         BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
+
+        WorkDoneListener.setNewListener(new OnCompleteListener() {
+            @Override
+            public void doWork() {
+                MainActivity.definitionWorksListener();
+            }
+        }.setTag(Constants.DO_FAVOURITE_DEFINITION_WORK));
     }
 
     public static ArrayList<String> getSymbols() {

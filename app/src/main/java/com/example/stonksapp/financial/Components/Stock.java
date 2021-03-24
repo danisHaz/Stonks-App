@@ -1,6 +1,7 @@
 package com.example.stonksapp.financial.Components;
 
 import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Activities.MainActivity;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.Quote;
 import com.example.stonksapp.financial.TradesPrices;
@@ -115,9 +116,12 @@ public class Stock implements Comparable<Stock> {
     @Ignore
     public void countPercentage(final HTTPSRequestClient.GET getter) {
         if (getter == null) {
-            Log.e("Err", "Request client is null when count percentage");
+            Log.e("Stock", "Request client is null when count percentage");
             return;
         }
+
+        if (!MainActivity.ifNetworkProvided)
+            return;
 
         Thread thread = new Thread(new Runnable() {
             @Override

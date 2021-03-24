@@ -5,7 +5,9 @@ import com.example.stonksapp.financial.Components.Stock;
 public class Constants {
     public static final String WATCH_STONKS_TAG = "com.example.stonksapp";
     public static final String MANAGE_YOUR_FAVOURITES_TAG = "manageFavouriteStonksTag";
-    public static final String NOTHING_ATTACHED_TAG = "nothingAttachedTag";
+    public static final String DO_SEARCH_WORK = "doSearchWork";
+    public static final String DO_FAVOURITE_DEFINITION_WORK = "doFavouriteDefinitionWork";
+    public static final String DO_WATCHING_DEFINITION_WORK = "doWatchingDefinitionWork";
     public static final String MAIN_API_URI = "wss://ws.finnhub.io?token=";
     public static final String API_TOKEN = "c12ht2f48v6oi252p5ag";
     public static final String ACTION_QUOTE = "com.example.stonksapp.ACTION_QUOTE";
@@ -30,8 +32,6 @@ public class Constants {
     public static final int SUCCESS = 116;
     public static final int FAILURE = 777;
     public static final String PING_MESSAGE = "{\"type\":\"ping\"}";
-    public static final int CURRENT_CLASS_IS_FAVOURITE = 112;
-    public static final int CURRENT_CLASS_IS_WATCHING = 123;
 
     public static boolean isNetworkConnectionProvided(android.content.Context context) {
         android.net.ConnectivityManager manager =

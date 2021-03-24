@@ -9,6 +9,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.example.stonksapp.Constants;
+import com.example.stonksapp.UI.Activities.MainActivity;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.Quote;
 import com.google.gson.annotations.SerializedName;
@@ -113,6 +114,9 @@ public class DefaultStock {
             Log.e("Err", "Request client is null when count percentage");
             return;
         }
+
+        if (!MainActivity.ifNetworkProvided)
+            return;
 
         try {
             Quote quote = getter.quote(String.format(
