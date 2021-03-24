@@ -1,10 +1,9 @@
-package com.example.stonksapp.UI.Activities;
+package com.example.stonksapp.UI.Fragments;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.stonksapp.R;
-import android.util.Log;
 
 public class LoadingFragment extends Fragment {
     private static LoadingFragment fragment;
@@ -48,4 +46,8 @@ public class LoadingFragment extends Fragment {
         progressBar.setVisibility(ProgressBar.VISIBLE);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 }

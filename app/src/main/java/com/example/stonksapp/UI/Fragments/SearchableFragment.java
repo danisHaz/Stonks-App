@@ -36,14 +36,21 @@ public class SearchableFragment extends Fragment {
     private static ArrayList<Stock> list = new ArrayList<>();
     private static SearchableActivity activity;
 
-    private SearchableFragment(final Bundle searchInfo) {
+    private SearchableFragment() { }
+
+    public static synchronized SearchableFragment createInstance(
+            final Bundle searchInfo, SearchableActivity mActivity) {
+        if (fragment == null)
+            fragment = new SearchableFragment();
+
+        activity = mActivity;
+        fragment.setArguments(searchInfo);
+
         Thread thready = new Thread(new Runnable() {
             @Override
             public void run() {
                 final SymbolQuery result = client.symbolLookup(String.format(
                         Constants.GET_SYMBOL_LOOKUP_TEMPLATE, searchInfo.getString("QUERY"), Constants.API_TOKEN));
-
-                Log.d("Deb", "qeqeweqewq");
 
                 for (SymbolQuery.SingleResult res : result.resultArray) {
                     list.add(Stock.from(res));
@@ -58,18 +65,16 @@ public class SearchableFragment extends Fragment {
         });
 
         thready.start();
+
+        return fragment;
     }
 
-    public static synchronized SearchableFragment createInstance(
-            Bundle searchInfo, SearchableActivity mActivity) {
-        if (fragment == null)
-            fragment = new SearchableFragment(searchInfo);
-        else
-            return fragment;
-
-        activity = mActivity;
-        fragment.setArguments(searchInfo);
-        return fragment;
+    public void refresh() {
+        if (fragment != null) {
+            list.clear();
+        } else {
+            Log.e("SearchableFragment", "Fragment is never created but refreshed");
+        }
     }
 
     @Override

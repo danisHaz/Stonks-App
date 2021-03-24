@@ -2,6 +2,7 @@ package com.example.stonksapp.UI.Activities;
 
 import com.example.stonksapp.R;
 import com.example.stonksapp.UI.Components.OnCompleteListener;
+import com.example.stonksapp.UI.Fragments.LoadingFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.UI.Components.WorkDoneListener;
 import com.example.stonksapp.financial.Components.FavouriteStock;
@@ -96,6 +97,13 @@ public class SearchableActivity extends AppCompatActivity {
             Log.e("Err", "Wrong query to SearchableActivity");
             onDestroy();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        fragment.refresh();
     }
 
 }
