@@ -28,6 +28,7 @@ public class SearchableActivity extends AppCompatActivity {
     protected static SearchableActivity activity;
     private static SearchableFragment fragment;
     private static LoadingFragment loading;
+    public static boolean isStopped = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +65,13 @@ public class SearchableActivity extends AppCompatActivity {
             WorkDoneListener.setNewListener(new OnCompleteListener() {
                 @Override
                 public synchronized void doWork() {
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragment_searchable, fragment, "fragmentSearchable")
-                            .commit();
+                    if (!isStopped) {
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.fragment_searchable, fragment, "fragmentSearchable")
+                                .commit();
+                    } else
+                        this.setWaiting();
                 }
             }.setTag(Constants.DO_SEARCH_WORK));
 
@@ -76,11 +80,11 @@ public class SearchableActivity extends AppCompatActivity {
             try {
                 tup = intent.getDataString();
             } catch (java.lang.IllegalStateException e) {
-                Log.e("Err", "Illegal State Exception in ACTION_VIEW");
+                Log.e("SearchableActivity", "Illegal State Exception in ACTION_VIEW");
             }
 
             if (tup == null) {
-                Log.e("Err", "Chosen suggestion provided null symbol");
+                Log.e("SearchableActivity", "Chosen suggestion provided null symbol");
                 finish();
             }
 
@@ -92,13 +96,33 @@ public class SearchableActivity extends AppCompatActivity {
                         transporter.symbol, transporter.description, "US", null));
                 BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup}, this);
             } catch (java.lang.NullPointerException e) {
-                Log.e("Err", "Chosen symbol in suggestions is null");
+                Log.e("SearchableActivity", "Chosen symbol in suggestions is null");
             }
             finish();
         } else {
-            Log.e("Err", "Wrong query to SearchableActivity");
+            Log.e("SearchableActivity", "Wrong query to SearchableActivity");
             onDestroy();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isStopped = false;
+
+        try {
+            if (WorkDoneListener.isListenerWaiting(Constants.DO_SEARCH_WORK))
+                WorkDoneListener.complete(Constants.DO_SEARCH_WORK, OnCompleteListener.Result.SUCCESS);
+        } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+            Log.e("SearchableActivity", "Work is not set or not yet ready to be completed");
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        isStopped = true;
     }
 
     @Override

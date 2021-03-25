@@ -52,16 +52,21 @@ public class SearchableFragment extends Fragment {
             @Override
             public void run() {
                 final SymbolQuery result = client.symbolLookup(String.format(
-                        Constants.GET_SYMBOL_LOOKUP_TEMPLATE, searchInfo.getString("QUERY"), Constants.API_TOKEN));
+                        Constants.GET_SYMBOL_LOOKUP_TEMPLATE,
+                        searchInfo.getString("QUERY"), Constants.API_TOKEN));
 
                 for (SymbolQuery.SingleResult res : result.resultArray) {
                     list.add(Stock.from(res));
                 }
 
-                try {
-                    WorkDoneListener.complete(Constants.DO_SEARCH_WORK, OnCompleteListener.Result.SUCCESS);
-                } catch (NullPointerException e) {
-                    Log.e("Searchable Fragment", "Work is not set");
+                if (!SearchableActivity.isStopped) {
+                    try {
+                        WorkDoneListener.complete(Constants.DO_SEARCH_WORK, OnCompleteListener.Result.SUCCESS);
+                    } catch (NullPointerException e) {
+                        Log.e("Searchable Fragment", "Work is not set");
+                    }
+                } else {
+                    WorkDoneListener.setListenerWaiting(Constants.DO_SEARCH_WORK);
                 }
             }
         });
