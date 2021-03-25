@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 

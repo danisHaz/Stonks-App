@@ -38,7 +38,7 @@ public class WebSocketClient {
     private void reconnect() {
         try {
             socket.recreate().connect();
-            Log.d("SocketClient", "reconnection OK");
+            Log.d("WebSocketClient", "reconnection OK");
         } catch (java.io.IOException | WebSocketException e) {
             e.printStackTrace();
         }
@@ -94,7 +94,7 @@ public class WebSocketClient {
 
     // class to listen to WebSocket actions
     public class SocketListener extends WebSocketAdapter {
-        private String listenerTag = "SocketListenerTag";
+        private String listenerTag = "WebSocketClient";
 
         // todo: all updates should work async
         private void update(String message) {
@@ -114,10 +114,10 @@ public class WebSocketClient {
                 }
 
                 if (resultId == Constants.FAILURE) {
-                    Log.d("Socket Updater", "update failure");
+                    Log.d("WebSocketClient", "update failure");
                 }
             } catch (JsonSyntaxException e) {
-                Log.d("Err", "Provided class for JSON is not valid");
+                Log.d("WebSocketClient", "Provided class for JSON is not valid");
                 e.printStackTrace();
             }
         }
@@ -157,7 +157,7 @@ public class WebSocketClient {
         @Override
         public void onUnexpectedError(WebSocket ws, WebSocketException err) {
             try {
-                Log.d(listenerTag, err.getMessage());
+                Log.e(listenerTag, err.getMessage());
             } catch (java.lang.NullPointerException e) {
                 e.printStackTrace();
             }
