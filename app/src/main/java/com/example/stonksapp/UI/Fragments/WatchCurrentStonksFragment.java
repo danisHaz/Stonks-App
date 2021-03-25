@@ -48,12 +48,10 @@ public class WatchCurrentStonksFragment extends Fragment {
     }
 
     public int updateAndRefresh() {
-        Log.d("Current", "Trying to update");
         FragmentTransaction transaction = innerContext
                 .getSupportFragmentManager().beginTransaction();
         try {
-            Fragment fragg = innerContext.getSupportFragmentManager()
-                    .findFragmentByTag(Constants.WATCH_STONKS_TAG);
+            Fragment fragg = frag;
             transaction.detach(fragg);
             transaction.attach(fragg);
             transaction.commit();
@@ -137,17 +135,17 @@ public class WatchCurrentStonksFragment extends Fragment {
                             WatchingStocks.watchingStocks.get(pos).percents));
                     holder.percents
                             .setTextColor(innerContext.getResources().getColor(R.color.myRed));
-                } else {
+                } else if (WatchingStocks.watchingStocks.get(pos).percents != null) {
                     holder.percents.setText(String.format("+%s%%",
                             WatchingStocks.watchingStocks.get(pos).percents));
                     holder.percents
                             .setTextColor(innerContext.getResources().getColor(R.color.myGreen));
                 }
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                Log.d("Err", "index out of bound when set text to (price)cell");
+                Log.d("WatchCurrentStonksFrag", "index out of bound when set text to (price)cell");
                 e.printStackTrace();
             } catch (java.lang.NullPointerException e) {
-                Log.d("Err", "holder.(price)cell is null");
+                Log.d("WatchCurrentStonksFrag", "holder.(price)cell is null");
                 e.printStackTrace();
             }
 

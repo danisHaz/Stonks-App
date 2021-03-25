@@ -165,7 +165,6 @@ public class Stock implements Comparable<Stock> {
     @Ignore
     public static Stock from(TradesPrices trades) {
         TradesData data = trades.data[trades.data.length - 1];
-//        Stock newStock = new Stock(data.symbol, null, null, data.price);
         Stock newStock = new Stock();
         newStock.symbol = data.symbol;
         newStock.price = data.price;
@@ -174,7 +173,6 @@ public class Stock implements Comparable<Stock> {
 
     @Ignore
     public static Stock from(SingleResult res) {
-//        return new Stock(res.symbol, res.description, "US", null);
         Stock stockie = new Stock();
         stockie.symbol = res.symbol;
         stockie.name = res.description;
@@ -200,7 +198,8 @@ public class Stock implements Comparable<Stock> {
         defStock.url = stock.url;
         if (stock.percents == null)
             defStock.countPercentage(getter);
-        defStock.percents = stock.percents;
+        else
+            defStock.percents = stock.percents;
 
         return defStock;
     }

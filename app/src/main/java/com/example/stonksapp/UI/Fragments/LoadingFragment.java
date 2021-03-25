@@ -14,16 +14,13 @@ import android.widget.ProgressBar;
 import com.example.stonksapp.R;
 
 public class LoadingFragment extends Fragment {
-    private static LoadingFragment fragment;
 
     public LoadingFragment() {
         // Required empty public constructor
     }
 
     public static synchronized LoadingFragment createInstance() {
-        if (fragment == null)
-            fragment = new LoadingFragment();
-        return fragment;
+        return new LoadingFragment();
     }
 
     @Override

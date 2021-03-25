@@ -35,6 +35,7 @@ public class SearchableFragment extends Fragment {
     private static final HTTPSRequestClient.GET client = new HTTPSRequestClient.GET();
     private static ArrayList<Stock> list = new ArrayList<>();
     private static SearchableActivity activity;
+    private String searchQuery;
 
     private SearchableFragment() { }
 
@@ -45,6 +46,7 @@ public class SearchableFragment extends Fragment {
 
         activity = mActivity;
         fragment.setArguments(searchInfo);
+        fragment.searchQuery = searchInfo.getString("QUERY");
 
         Thread thready = new Thread(new Runnable() {
             @Override
@@ -95,7 +97,7 @@ public class SearchableFragment extends Fragment {
             return;
         }
 
-        ((TextView) view.findViewById(R.id.yourListView)).setText(R.string.yourResults);
+        ((TextView) view.findViewById(R.id.yourListView)).setText(String.format(Constants.SEARCH_TEMPLATE, searchQuery));
         recView.setAdapter(new CustomItemAdapter(null));
     }
 

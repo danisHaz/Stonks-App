@@ -140,7 +140,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
                     holder.percents.setText(String.format(
                             "%s%%", FavouriteStock.currentFavourites.get(pos).percents));
                     holder.percents.setTextColor(activity.getResources().getColor(R.color.myRed));
-                } else {
+                } else if (FavouriteStock.currentFavourites.get(pos).percents != null) {
                     holder.percents.setText(String.format(
                             "+%s%%", FavouriteStock.currentFavourites.get(pos).percents));
                     holder.percents.setTextColor(activity.getResources().getColor(R.color.myGreen));

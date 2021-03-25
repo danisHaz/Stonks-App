@@ -38,6 +38,7 @@ public class SearchableActivity extends AppCompatActivity {
 
         activity = this;
         Intent intent = getIntent();
+        final String stockQuery = intent.getStringExtra(SearchManager.QUERY);
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
@@ -57,7 +58,7 @@ public class SearchableActivity extends AppCompatActivity {
                     .commit();
 
             Bundle bundle = new Bundle();
-            bundle.putString("QUERY", intent.getStringExtra(SearchManager.QUERY));
+            bundle.putString("QUERY", stockQuery);
             fragment = SearchableFragment.createInstance(bundle, activity);
 
             WorkDoneListener.setNewListener(new OnCompleteListener() {

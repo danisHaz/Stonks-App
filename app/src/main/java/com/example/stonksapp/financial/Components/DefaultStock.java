@@ -95,6 +95,8 @@ public class DefaultStock {
         defStock.percents = stock.percents;
         if (stock.percents == null)
             defStock.countPercentage(getter);
+        else
+            defStock.percents = stock.percents;
 
         return defStock;
     }
@@ -109,25 +111,32 @@ public class DefaultStock {
     }
 
     @Ignore
-    public void countPercentage(HTTPSRequestClient.GET getter) {
+    public void countPercentage(final HTTPSRequestClient.GET getter) {
         if (getter == null) {
-            Log.e("Err", "Request client is null when count percentage");
+            Log.e("Stock", "Request client is null when count percentage");
             return;
         }
 
         if (!MainActivity.ifNetworkProvided)
             return;
 
-        try {
-            Quote quote = getter.quote(String.format(
-                    Constants.GET_QUOTE_TEMPLATE, symbol, Constants.API_TOKEN));
-            double myPercents =
-                    ((Double.parseDouble(quote.current)) / (Double.parseDouble(quote.previous)) - (double) 1) * 100;
-            percents = String.format("%.2f", myPercents);
-            price = quote.current;
-        } catch (NullPointerException e) {
-            Log.e("Err", "Some symbol not found");
-        }
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                try {
+                    Quote quote = getter.quote(String.format(
+                            Constants.GET_QUOTE_TEMPLATE, symbol, Constants.API_TOKEN));
+                    double myPercents =
+                            ((Double.parseDouble(quote.current)) / (Double.parseDouble(quote.previous)) - (double) 1) * 100;
+                    percents = String.format("%.2f", myPercents);
+                    price = quote.current;
+                } catch (NullPointerException e) {
+                    Log.e("Err", "Some symbol not found");
+                }
+            }
+        });
+
+        thread.start();
     }
 
 }

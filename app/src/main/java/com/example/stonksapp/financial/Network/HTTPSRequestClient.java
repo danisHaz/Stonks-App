@@ -46,7 +46,7 @@ public class HTTPSRequestClient {
             }
 
             if (reader == null)
-                Log.e("Err", "Connection failed");
+                Log.e("HTTPSRequestClient", "Connection failed");
 
             return reader;
         }
@@ -78,13 +78,13 @@ public class HTTPSRequestClient {
                                 gson.fromJson(jsonMessage, StockSymbolsArray.class);
 
                     } catch (MalformedURLException e) {
-                        Log.d("Err", "Provided wrong URL in stock symbols");
+                        Log.d("HTTPSRequestClient", "Provided wrong URL in stock symbols");
                         e.printStackTrace();
                     } catch (IOException e) {
-                        Log.d("Err", "IOException occurred in stock symbols");
+                        Log.d("HTTPSRequestClient", "IOException occurred in stock symbols");
                         e.printStackTrace();
                     } catch (IllegalStateException e) {
-                        Log.d("Err", "json format is wrong");
+                        Log.d("HTTPSRequestClient", "json format is wrong");
                         e.printStackTrace();
                     }
                 }
@@ -120,13 +120,13 @@ public class HTTPSRequestClient {
                 res[0] = gson.fromJson(jsonMessage, SymbolQuery.class);
 
             } catch (MalformedURLException e) {
-                Log.d("Err", "Provided wrong URL in symbol lookup");
+                Log.d("HTTPSRequestClient", "Provided wrong URL in symbol lookup");
                 e.printStackTrace();
             } catch (IOException e) {
-                Log.d("Err", "IOException occurred in symbol lookup");
+                Log.d("HTTPSRequestClient", "IOException occurred in symbol lookup");
                 e.printStackTrace();
             } catch (IllegalStateException e) {
-                Log.d("Err", "json format is wrong");
+                Log.d("HTTPSRequestClient", "json format is wrong");
                 e.printStackTrace();
             }
 
@@ -157,13 +157,13 @@ public class HTTPSRequestClient {
                         res[0] = gson.fromJson(jsonMessage, Quote.class);
 
                     } catch (MalformedURLException e) {
-                        Log.d("Err", "Provided wrong URL in quote");
+                        Log.d("HTTPSRequestClient", "Provided wrong URL in quote");
                         e.printStackTrace();
                     } catch (IOException e) {
-                        Log.d("Err", "IOException occurred in quote");
+                        Log.d("HTTPSRequestClient", "IOException occurred in quote");
                         e.printStackTrace();
                     } catch (IllegalStateException e) {
-                        Log.d("Err", "json format is wrong");
+                        Log.d("HTTPSRequestClient", "json format is wrong");
                         e.printStackTrace();
                     }
                 }
