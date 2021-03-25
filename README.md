@@ -1,7 +1,7 @@
 # Stonks App
 #### _Make Stonks Great Again!_
 
-## Description:
+## Description
 Stonks App is an Android application for online checking mainstream stocks
 and keeping some of them as favourites for convenient tracking.
 
@@ -12,11 +12,14 @@ On main page you get list of stocks from XNGS(XNAS) MIC code [NASDAQ]. You can s
 It's going to be updated:
 - Provide more stability and speed by using _reactive libraries_ ([this](https://github.com/ReactiveX/RxJava) or [this](https://github.com/ReactiveX/RxKotlin))
 
-## Tools:
+## Requirements
+- minSdkVersion 23 (Android 6 Marshmallow)
+
+## Tools
 - [Finnhub API](https://finnhub.io/) - retrieving all financial information about stocks, companies and etc.
 - [nv-websocket-client](https://github.com/TakahikoKawasaki/nv-websocket-client) - providing user with stable online updates of current prices for more convenience
 
-## Screenshots:
+## Screenshots
 <img src="./screenshots/screenshot_main_v2.jpg" alt="drawing" width="200" height="400"/> <img src="./screenshots/screenshot_favourite_v2.jpg" alt="drawing" width="200" height="400"/> <img src="./screenshots/screenshot_search_v2.jpg" alt="drawing" width="200" height="400"/>
 
 ## Communication
