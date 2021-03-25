@@ -72,7 +72,7 @@ public class FavouriteStock implements FavouriteObject {
 
     public static boolean isInDelayedDeletion(int pos) {
         if (pos >= currentFavourites.size()) {
-            Log.e("Err", "Chosen Stock in favourites has incorrect position");
+            Log.e("FavouriteStock", "Chosen Stock in favourites has incorrect position");
             return false;
         }
         for (Stock s: delayedDelete) {
@@ -94,7 +94,7 @@ public class FavouriteStock implements FavouriteObject {
 
     public static void addToFavourites(Stock stock) {
         if (isInFavourites(stock) != -1) {
-            Log.d("Warn", "Provided stock already in favourites");
+            Log.i("FavouriteStock", "Provided stock already in favourites");
             return;
         }
 
@@ -132,7 +132,7 @@ public class FavouriteStock implements FavouriteObject {
             }
         }
 
-        Log.e("Err", "Attempt to delete element from favourites that not exist");
+        Log.e("FavouriteStock", "Attempt to delete element from favourites that not exist");
     }
 
 }
