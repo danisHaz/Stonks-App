@@ -28,10 +28,13 @@ public class SendDailyQuoteWork extends Worker {
             return ListenableWorker.Result.failure();
         }
 
+        Log.d("i am", "here");
+
         if (BackgroundTaskHandler.myDb == null) {
+            Log.d("baga", "veev");
             BackgroundTaskHandler.defineDB(getApplicationContext());
             WatchingStocks.define(getApplicationContext());
-            FavouriteStock.define();
+            FavouriteStock.define(getApplicationContext());
         }
 
         HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
