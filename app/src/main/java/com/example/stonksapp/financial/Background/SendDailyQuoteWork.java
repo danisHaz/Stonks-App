@@ -37,11 +37,11 @@ public class SendDailyQuoteWork extends Worker {
         HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
 
         for (Stock stock: WatchingStocks.watchingStocks) {
-            stock.countPercentage(getter);
+            stock.countPercentage(getter, false);
         }
 
         for (Stock stock: FavouriteStock.currentFavourites) {
-            stock.countPercentage(getter);
+            stock.countPercentage(getter, true);
         }
 
         return ListenableWorker.Result.success();

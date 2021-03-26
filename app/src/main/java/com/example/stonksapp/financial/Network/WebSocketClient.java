@@ -69,6 +69,8 @@ public class WebSocketClient {
                 }
             }
         });
+
+        thready.setDaemon(true);
         thready.start();
 
         try {

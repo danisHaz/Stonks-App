@@ -36,15 +36,15 @@ public class WatchingStocks implements FavouriteObject {
                     Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", "XNAS", Constants.API_TOKEN));
 
             for (int i = 0; i < java.lang.Math.min(a.length, 10); i++) {
-                insert(new Stock(a[i].symbol, a[i].description, a[i].currency, null));
+                insert(new Stock(a[i].symbol, a[i].description, a[i].currency, null, false));
             }
 
             if (a.length == 0) {
-                insert(new Stock("GOOGL", "GOOGLE INC", "US", "N/A"));
-                insert(new Stock("AAPL", "APPLE INC", "US", "N/A"));
-                insert(new Stock("AMZN", "AMAZON INC", "US", "N/A"));
-                insert(new Stock("NFLX", "NETFLIX INC", "US", "N/A"));
-                insert(new Stock("TSLA", "TESLA INC", "US", "N/A"));
+                insert(new Stock("GOOGL", "GOOGLE INC", "US", "N/A", false));
+                insert(new Stock("AAPL", "APPLE INC", "US", "N/A", false));
+                insert(new Stock("AMZN", "AMAZON INC", "US", "N/A", false));
+                insert(new Stock("NFLX", "NETFLIX INC", "US", "N/A", false));
+                insert(new Stock("TSLA", "TESLA INC", "US", "N/A", false));
 
                 Log.w("WatchingStocks", "XNAS not working");
             }
@@ -101,7 +101,7 @@ public class WatchingStocks implements FavouriteObject {
             }
         }
 
-        stock.countPercentage(getter);
+        stock.countPercentage(getter, false);
         watchingStocks.add(stock);
         BackgroundTaskHandler.myDb.insertCurrent(stock);
     }

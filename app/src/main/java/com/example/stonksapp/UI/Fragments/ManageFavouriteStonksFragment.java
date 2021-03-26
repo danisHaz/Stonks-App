@@ -48,7 +48,6 @@ public class ManageFavouriteStonksFragment extends Fragment {
     }
 
     public int updateAndRefresh() {
-        Log.d("Favourite", "trying to update");
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
@@ -58,7 +57,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
 
             return Constants.SUCCESS;
         } catch (NullPointerException e) {
-            Log.e("Err", "Manage Favourites fragment not found");
+            Log.e("ManageFavouriteStonks", "Manage Favourites fragment not found");
             e.printStackTrace();
             return Constants.FAILURE;
         }

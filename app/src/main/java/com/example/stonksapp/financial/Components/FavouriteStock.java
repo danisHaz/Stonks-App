@@ -98,7 +98,6 @@ public class FavouriteStock implements FavouriteObject {
             return;
         }
 
-        stock.countPercentage(getter);
         currentFavourites.add(stock);
         BackgroundTaskHandler.myDb.insertFavourite(stock);
     }

@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.Quote;
 import com.google.gson.annotations.SerializedName;
