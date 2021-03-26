@@ -116,7 +116,7 @@ public class StockDataBase {
                 }
             }
         });
-
+        thread.setDaemon(true);
         thread.start();
     }
 

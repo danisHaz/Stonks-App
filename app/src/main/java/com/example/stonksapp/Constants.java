@@ -33,6 +33,7 @@ public class Constants {
     public static final int FAILURE = 777;
     public static final String PING_MESSAGE = "{\"type\":\"ping\"}";
     public static final String SEARCH_TEMPLATE = "Found results for '%s':";
+    public static final String NO_SEARCH_TEMPLATE = "No results for '%s'";
 
     public static boolean isNetworkConnectionProvided(android.content.Context context) {
         android.net.ConnectivityManager manager =

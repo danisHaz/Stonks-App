@@ -97,12 +97,13 @@ public class SearchableFragment extends Fragment {
         recView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         if (list.isEmpty()) {
-            list.add(new Stock("No results", "", "", ""));
-            recView.setAdapter(new CustomItemAdapter(null));
+            ((TextView) view.findViewById(R.id.yourListView))
+                    .setText(String.format(Constants.NO_SEARCH_TEMPLATE, searchQuery));
             return;
         }
 
-        ((TextView) view.findViewById(R.id.yourListView)).setText(String.format(Constants.SEARCH_TEMPLATE, searchQuery));
+        ((TextView) view.findViewById(R.id.yourListView))
+                .setText(String.format(Constants.SEARCH_TEMPLATE, searchQuery));
         recView.setAdapter(new CustomItemAdapter(null));
     }
 
@@ -158,7 +159,7 @@ public class SearchableFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         FavouriteStock.addToFavourites(new Stock(list.get(pos).symbol,
-                                list.get(pos).name,"US", null));
+                                list.get(pos).name,"US", null, true));
 
                         BackgroundTaskHandler.subscribeOnLastPriceUpdates(
                                 new String[]{list.get(pos).symbol}, activity);

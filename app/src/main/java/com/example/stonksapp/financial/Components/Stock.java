@@ -2,6 +2,9 @@ package com.example.stonksapp.financial.Components;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.UI.Components.OnCompleteListener;
+import com.example.stonksapp.UI.Components.WorkDoneListener;
+import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
 import com.example.stonksapp.financial.Network.HTTPSRequestClient;
 import com.example.stonksapp.financial.Quote;
 import com.example.stonksapp.financial.TradesPrices;
@@ -86,8 +89,6 @@ public class Stock implements Comparable<Stock> {
         this.symbol = symbol;
         this.country = country;
         this.price = "N/A";
-
-        countPercentage(getter);
     }
 
     @Ignore
@@ -95,26 +96,27 @@ public class Stock implements Comparable<Stock> {
 
     @Deprecated
     @Ignore
-    public Stock(@NonNull String symbol, @Nullable String country, @Nullable String price) {
+    public Stock(@NonNull String symbol, @Nullable String country, @Nullable String price, boolean isFavourite) {
         this.symbol = symbol;
         this.country = country;
         this.price = price;
 
-        countPercentage(getter);
+        countPercentage(getter, isFavourite);
     }
 
     @Ignore
-    public Stock(@NonNull String symbol, String name, @Nullable String country, @Nullable String price) {
+    public Stock(@NonNull String symbol, String name, @Nullable String country,
+                 @Nullable String price, boolean isFavourite) {
         this.symbol = symbol;
         this.name = name;
         this.country = country;
         this.price = price;
 
-        countPercentage(getter);
+        countPercentage(getter, isFavourite);
     }
 
     @Ignore
-    public void countPercentage(final HTTPSRequestClient.GET getter) {
+    public void countPercentage(final HTTPSRequestClient.GET getter, final boolean isFavourite) {
         if (getter == null) {
             Log.e("Stock", "Request client is null when count percentage");
             return;
@@ -122,6 +124,8 @@ public class Stock implements Comparable<Stock> {
 
         if (!MainActivity.ifNetworkProvided)
             return;
+
+        final Stock currentStock = this;
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -133,6 +137,10 @@ public class Stock implements Comparable<Stock> {
                             ((Double.parseDouble(quote.current)) / (Double.parseDouble(quote.previous)) - (double) 1) * 100;
                     percents = String.format("%.2f", myPercents);
                     price = quote.current;
+                    if (isFavourite)
+                        BackgroundTaskHandler.myDb.updateFavourite(currentStock);
+                    else
+                        BackgroundTaskHandler.myDb.updateCurrent(currentStock);
                 } catch (NullPointerException e) {
                     Log.e("Err", "Some symbol not found");
                 }
@@ -197,7 +205,7 @@ public class Stock implements Comparable<Stock> {
         defStock.symbol = stock.symbol;
         defStock.url = stock.url;
         if (stock.percents == null)
-            defStock.countPercentage(getter);
+            defStock.countPercentage(getter, false);
         else
             defStock.percents = stock.percents;
 

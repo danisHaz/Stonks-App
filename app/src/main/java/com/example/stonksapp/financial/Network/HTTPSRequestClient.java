@@ -90,6 +90,8 @@ public class HTTPSRequestClient {
                 }
             });
 
+            thread.setDaemon(true);
+
             thread.start();
 
             try {
@@ -169,7 +171,9 @@ public class HTTPSRequestClient {
                 }
             });
 
+            thread.setDaemon(true);
             thread.start();
+
             try {
                 thread.join();
             } catch (InterruptedException e) {
