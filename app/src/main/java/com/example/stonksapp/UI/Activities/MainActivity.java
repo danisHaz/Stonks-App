@@ -17,6 +17,7 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
             BackgroundTaskHandler.defineDB(this);
             WatchingStocks.define(this);
-            FavouriteStock.define();
+            FavouriteStock.define(this);
 
             watchCurrentStonksFragment =
                     WatchCurrentStonksFragment.createInstance(null, this);

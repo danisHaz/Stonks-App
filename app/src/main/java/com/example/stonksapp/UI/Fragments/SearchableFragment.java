@@ -155,7 +155,15 @@ public class SearchableFragment extends Fragment {
                 else
                     holder.linearLayout.setBackgroundResource(R.drawable.simple_text_view_default);
 
-                holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+
+                holder.cell.setText(list.get(pos).symbol);
+                holder.description.setText(list.get(pos).name == null ?
+                        "Company Name": list.get(pos).name);
+                holder.priceCell.setText(list.get(pos).price);
+                holder.button.setChecked(FavouriteStock.isInFavourites(
+                        list.get(pos)) != -1);
+
+                holder.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         FavouriteStock.addToFavourites(new Stock(list.get(pos).symbol,
@@ -166,13 +174,6 @@ public class SearchableFragment extends Fragment {
                         activity.finish();
                     }
                 });
-
-                holder.cell.setText(list.get(pos).symbol);
-                holder.description.setText(list.get(pos).name == null ?
-                        "Company Name": list.get(pos).name);
-                holder.priceCell.setText(list.get(pos).price);
-                holder.button.setChecked(FavouriteStock.isInFavourites(
-                        list.get(pos)) != -1);
             } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 Log.e("Err", "index out of bound when set text to (price)cell");
                 e.printStackTrace();

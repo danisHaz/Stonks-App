@@ -51,9 +51,20 @@ public class WatchingStocks implements FavouriteObject {
 
             MainReceiver.enableAlarm(mActivity);
 
+            WorkDoneListener.setNewListener(new OnCompleteListener() {
+                @Override
+                public void doWork() {
+                    MainActivity.definitionWorksListener();
+                }
+            }.setTag(Constants.DO_WATCHING_DEFINITION_WORK));
+
             SharedPreferences.Editor pprefs =  prefs.edit();
             pprefs.putBoolean("isFirstBoot", false);
             pprefs.apply();
+
+            WorkDoneListener.complete(Constants.DO_WATCHING_DEFINITION_WORK,
+                    OnCompleteListener.Result.SUCCESS);
+            return;
         }
 
         WorkDoneListener.setNewListener(new OnCompleteListener() {

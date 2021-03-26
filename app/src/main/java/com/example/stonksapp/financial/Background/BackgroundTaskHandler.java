@@ -52,7 +52,8 @@ public class BackgroundTaskHandler {
         ComponentName componentName = new ComponentName(context, cls);
         JobInfo.Builder builder = new JobInfo.Builder(currJobNum++, componentName)
                 .setExtras(bundle)
-                .setRequiresCharging(false);
+                .setRequiresCharging(false)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
 
         JobScheduler scheduler =
                 (JobScheduler) context.getSystemService(JobScheduler.class);

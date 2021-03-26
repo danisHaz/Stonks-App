@@ -1,5 +1,7 @@
 package com.example.stonksapp.financial.Components;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.stonksapp.Constants;
@@ -23,10 +25,13 @@ public class FavouriteStock implements FavouriteObject {
         // add favourite stock
     }
 
-    public static void define() {
+    public static void define(Context context) {
         if (getter == null)
             getter = new HTTPSRequestClient.GET();
-        BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
+        SharedPreferences prefs = context.getSharedPreferences(Constants.WATCH_STONKS_TAG, Context.MODE_PRIVATE);
+
+        if (!prefs.getBoolean("isFirstBoot", true))
+            BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
 
         WorkDoneListener.setNewListener(new OnCompleteListener() {
             @Override

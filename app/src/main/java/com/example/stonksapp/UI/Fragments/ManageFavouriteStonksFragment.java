@@ -48,6 +48,7 @@ public class ManageFavouriteStonksFragment extends Fragment {
     }
 
     public int updateAndRefresh() {
+        Log.d("qewqe", "qeqwe");
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
