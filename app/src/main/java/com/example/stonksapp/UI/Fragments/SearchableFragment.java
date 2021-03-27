@@ -55,8 +55,12 @@ public class SearchableFragment extends Fragment {
                         Constants.GET_SYMBOL_LOOKUP_TEMPLATE,
                         searchInfo.getString("QUERY"), Constants.API_TOKEN));
 
-                for (SymbolQuery.SingleResult res : result.resultArray) {
-                    list.add(Stock.from(res));
+                try {
+                    for (SymbolQuery.SingleResult res : result.resultArray) {
+                        list.add(Stock.from(res));
+                    }
+                } catch (NullPointerException e) {
+                    Log.d("SearchableFragment", "result is null");
                 }
 
                 if (!SearchableActivity.isStopped) {

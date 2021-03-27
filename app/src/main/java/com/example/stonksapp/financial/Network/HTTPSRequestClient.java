@@ -20,29 +20,30 @@ import java.lang.IllegalStateException;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import javax.net.ssl.HttpsURLConnection;
 
 public class HTTPSRequestClient {
 
     public static class GET {
-        private BufferedReader getJSONinString(String url) {
+        private BufferedReader getJSONinString(String url, @Nullable HttpsURLConnection connection) {
             if (!MainActivity.ifNetworkProvided)
                 return null;
 
             BufferedReader reader = null;
             try {
-                URL obj = new URL(url);
-                HttpsURLConnection connection =
-                        (HttpsURLConnection) obj.openConnection();
-
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0");
                 connection.setRequestProperty("Content-Type", "application/json");
 
                 reader = new BufferedReader(
                         new InputStreamReader(connection.getInputStream()));
+
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e) {
+                Log.e("HTTPSRequestClient", "Connection is null");
             }
 
             if (reader == null)
@@ -57,8 +58,11 @@ public class HTTPSRequestClient {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    HttpsURLConnection connection = null;
                     try {
-                        BufferedReader reader = getJSONinString(url);
+                        URL obj = new URL(url);
+                        connection = (HttpsURLConnection) obj.openConnection();
+                        BufferedReader reader = getJSONinString(url, connection);
                         if (reader == null)
                             return;
 
@@ -87,6 +91,9 @@ public class HTTPSRequestClient {
                         Log.d("HTTPSRequestClient", "json format is wrong");
                         e.printStackTrace();
                     }
+
+                    if (connection != null)
+                        connection.disconnect();;
                 }
             });
 
@@ -100,14 +107,19 @@ public class HTTPSRequestClient {
                 e.printStackTrace();
             }
 
+            if (finalArr[0] == null)
+                return null;
+
             return finalArr[0].arr;
         }
 
         public SymbolQuery symbolLookup(final String url) {
             final SymbolQuery[] res = new SymbolQuery[1];
-
+            HttpsURLConnection connection = null;
             try {
-                BufferedReader reader = getJSONinString(url);
+                URL obj = new URL(url);
+                connection = (HttpsURLConnection) obj.openConnection();
+                BufferedReader reader = getJSONinString(url, connection);
 
                 String jsonMessage = "";
                 String str;
@@ -130,7 +142,11 @@ public class HTTPSRequestClient {
             } catch (IllegalStateException e) {
                 Log.d("HTTPSRequestClient", "json format is wrong");
                 e.printStackTrace();
+            } catch (NullPointerException e) {
+                Log.d("HTTPSRequestClient", "Connection is not stable or provided");
             }
+            if (connection != null)
+                connection.disconnect();
 
             return res[0];
         }
@@ -141,8 +157,12 @@ public class HTTPSRequestClient {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    HttpsURLConnection connection = null;
                     try {
-                        BufferedReader reader = getJSONinString(url);
+                        URL obj = new URL(url);
+                        connection = (HttpsURLConnection) obj.openConnection();
+                        BufferedReader reader = getJSONinString(url, connection);
+
                         if (reader == null)
                             return;
 
@@ -168,6 +188,9 @@ public class HTTPSRequestClient {
                         Log.d("HTTPSRequestClient", "json format is wrong");
                         e.printStackTrace();
                     }
+
+                    if (connection != null)
+                        connection.disconnect();;
                 }
             });
 

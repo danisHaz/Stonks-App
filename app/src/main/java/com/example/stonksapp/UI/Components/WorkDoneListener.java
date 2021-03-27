@@ -28,7 +28,7 @@ public class WorkDoneListener {
         return -1;
     }
 
-    public static void complete(@NonNull final String tag, OnCompleteListener.Result result) throws NullPointerException {
+    public static synchronized void complete(@NonNull final String tag, OnCompleteListener.Result result) throws NullPointerException {
         if (result == OnCompleteListener.Result.SUCCESS) {
             Log.i("WorkDoneListener", "Previous work complete");
         } else {
