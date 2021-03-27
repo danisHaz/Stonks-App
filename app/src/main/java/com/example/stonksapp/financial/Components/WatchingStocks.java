@@ -34,12 +34,14 @@ public class WatchingStocks implements FavouriteObject {
         } else {
             StockSymbol[] a = getter.StockSymbols(String.format(
                     Constants.GET_STOCK_SYMBOLS_TEMPLATE, "US", "XNAS", Constants.API_TOKEN));
-
-            for (int i = 0; i < java.lang.Math.min(a.length, 10); i++) {
-                insert(new Stock(a[i].symbol, a[i].description, a[i].currency, null, false));
+            try {
+                for (int i = 0; i < java.lang.Math.min(a.length, 10); i++) {
+                    insert(new Stock(a[i].symbol, a[i].description, a[i].currency, null, false));
+                }
+            } catch (NullPointerException e) {
+                Log.e("WatchingStocks", "stock symbols crashed");
             }
-
-            if (a.length == 0) {
+            if (a == null || a.length == 0) {
                 insert(new Stock("GOOGL", "GOOGLE INC", "US", "N/A", false));
                 insert(new Stock("AAPL", "APPLE INC", "US", "N/A", false));
                 insert(new Stock("AMZN", "AMAZON INC", "US", "N/A", false));

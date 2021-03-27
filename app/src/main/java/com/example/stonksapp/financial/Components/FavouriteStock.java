@@ -30,15 +30,16 @@ public class FavouriteStock implements FavouriteObject {
             getter = new HTTPSRequestClient.GET();
         SharedPreferences prefs = context.getSharedPreferences(Constants.WATCH_STONKS_TAG, Context.MODE_PRIVATE);
 
-        if (!prefs.getBoolean("isFirstBoot", true))
-            BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
-
         WorkDoneListener.setNewListener(new OnCompleteListener() {
             @Override
             public void doWork() {
                 MainActivity.definitionWorksListener();
             }
         }.setTag(Constants.DO_FAVOURITE_DEFINITION_WORK));
+
+        if (!prefs.getBoolean("isFirstBoot", true))
+            BackgroundTaskHandler.myDb.getAll(FavouriteStock.class);
+
     }
 
     public static ArrayList<String> getSymbols() {
