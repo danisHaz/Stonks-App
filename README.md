@@ -15,6 +15,10 @@ It's going to be updated:
 ## Requirements
 - minSdkVersion 23 (Android 6 Marshmallow)
 
+#### Tests were held on:
+- Physical device (Android Q, SdkVersion 30)
+- Virtual device in Android Studio (Android 8, SdkVersion 26)
+
 ## Tools
 - [Finnhub API](https://finnhub.io/) - retrieving all financial information about stocks, companies and etc.
 - [nv-websocket-client](https://github.com/TakahikoKawasaki/nv-websocket-client) - providing user with stable online updates of current prices for more convenience
