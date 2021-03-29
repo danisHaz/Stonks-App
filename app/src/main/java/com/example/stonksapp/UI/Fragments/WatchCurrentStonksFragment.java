@@ -57,7 +57,7 @@ public class WatchCurrentStonksFragment extends Fragment {
             transaction.commit();
             return Constants.SUCCESS;
         } catch (NullPointerException e) {
-            Log.d("Err", "Watch stonks fragment not found");
+            Log.d("WatchCurrentStonksFr", "Watch stonks fragment not found");
             e.printStackTrace();
             return Constants.FAILURE;
         }

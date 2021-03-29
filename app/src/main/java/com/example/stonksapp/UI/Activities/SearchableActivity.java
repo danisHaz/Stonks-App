@@ -129,7 +129,11 @@ public class SearchableActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        fragment.refresh();
+        try {
+            fragment.refresh();
+        } catch (NullPointerException e) {
+            Log.d("SearchableActivity", "quick search before initialization");
+        }
     }
 
 }
