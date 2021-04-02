@@ -8,6 +8,7 @@ public class Constants {
     public static final String DO_SEARCH_WORK = "doSearchWork";
     public static final String DO_FAVOURITE_DEFINITION_WORK = "doFavouriteDefinitionWork";
     public static final String DO_WATCHING_DEFINITION_WORK = "doWatchingDefinitionWork";
+    public static final String DO_DAILY_WORK = "doDailyWork";
     public static final String MAIN_API_URI = "wss://ws.finnhub.io?token=";
     public static final String API_TOKEN = "c12ht2f48v6oi252p5ag";
     public static final String ACTION_QUOTE = "com.example.stonksapp.ACTION_QUOTE";

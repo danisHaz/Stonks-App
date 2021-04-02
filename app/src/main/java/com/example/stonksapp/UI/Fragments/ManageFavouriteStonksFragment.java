@@ -51,7 +51,6 @@ public class ManageFavouriteStonksFragment extends Fragment {
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
 
         try {
-
             transaction.detach(this);
             transaction.attach(this).commit();
 

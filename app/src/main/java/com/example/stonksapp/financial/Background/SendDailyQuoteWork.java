@@ -8,7 +8,10 @@ import androidx.work.WorkerParameters;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.stonksapp.Constants;
 import com.example.stonksapp.UI.Activities.MainActivity;
+import com.example.stonksapp.UI.Components.OnCompleteListener;
+import com.example.stonksapp.UI.Components.WorkDoneListener;
 import com.example.stonksapp.financial.Components.FavouriteStock;
 import com.example.stonksapp.financial.Components.Stock;
 import com.example.stonksapp.financial.Components.WatchingStocks;
@@ -30,21 +33,27 @@ public class SendDailyQuoteWork extends Worker {
 
         Log.d("i am", "here");
 
+        WorkDoneListener.setNewListener(new OnCompleteListener() {
+            @Override
+            public void doWork() {
+                HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
+
+                Log.d("SendDailyQuoteWork", "Main work is running");
+
+                for (Stock stock: WatchingStocks.watchingStocks) {
+                    stock.countPercentage(getter, false);
+                }
+
+                for (Stock stock: FavouriteStock.currentFavourites) {
+                    stock.countPercentage(getter, true);
+                }
+            }
+        }.setTag(Constants.DO_DAILY_WORK));
+
         if (BackgroundTaskHandler.myDb == null) {
-            Log.d("baga", "veev");
             BackgroundTaskHandler.defineDB(getApplicationContext());
             WatchingStocks.define(getApplicationContext());
             FavouriteStock.define(getApplicationContext());
-        }
-
-        HTTPSRequestClient.GET getter = new HTTPSRequestClient.GET();
-
-        for (Stock stock: WatchingStocks.watchingStocks) {
-            stock.countPercentage(getter, false);
-        }
-
-        for (Stock stock: FavouriteStock.currentFavourites) {
-            stock.countPercentage(getter, true);
         }
 
         return ListenableWorker.Result.success();

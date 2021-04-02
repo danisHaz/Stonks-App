@@ -29,21 +29,23 @@ public class WorkDoneListener {
     }
 
     public static synchronized void complete(@NonNull final String tag, OnCompleteListener.Result result) throws NullPointerException {
+
+        int i = getPosition(tag);
+        if (i == -1) {
+            Log.e("WorkDoneListener", String.format("Want to do work in non-existing listener: %s", tag));
+            return;
+        }
         if (result == OnCompleteListener.Result.SUCCESS) {
             Log.i("WorkDoneListener", "Previous work complete");
         } else {
             Log.i("WorkDoneListener", "Previous work incomplete");
         }
 
-        int i = getPosition(tag);
         if (i != -1) {
             listenerList.get(i).doWork();
             listenerList.remove(i);
             Log.i("WorkDoneListener", "Work Done");
-            return;
         }
-
-        Log.e("WorkDoneListener", "Want to do work in non-existing listener");
     }
 
     public static boolean isListenerSet(@NonNull final String tag) {

@@ -30,6 +30,67 @@ public class SearchableActivity extends AppCompatActivity {
     private static LoadingFragment loading;
     public static boolean isStopped = false;
 
+    public void actionSearch(final String stockQuery) {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        loading = LoadingFragment.createInstance();
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.fragment_searchable, loading, "Loading")
+                .commit();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("QUERY", stockQuery);
+        fragment = SearchableFragment.createInstance(bundle, activity);
+
+        WorkDoneListener.setNewListener(new OnCompleteListener() {
+            @Override
+            public synchronized void doWork() {
+                if (!isStopped) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragment_searchable, fragment, "fragmentSearchable")
+                            .commit();
+                } else
+                    this.setWaiting();
+            }
+        }.setTag(Constants.DO_SEARCH_WORK));
+    }
+
+    public void actionView(Intent intent) {
+        String tup = "AAPL";
+        try {
+            tup = intent.getDataString();
+        } catch (java.lang.IllegalStateException e) {
+            Log.e("SearchableActivity", "Illegal State Exception in ACTION_VIEW");
+        }
+
+        if (tup == null) {
+            Log.e("SearchableActivity", "Chosen suggestion provided null symbol");
+            finish();
+        }
+
+        SimpleStockTransporter transporter = (new GsonBuilder().create())
+                .fromJson(tup, SimpleStockTransporter.class);
+
+        try {
+            FavouriteStock.addToFavourites(new Stock(
+                    transporter.symbol, transporter.description, "US", null, true));
+            BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup}, this);
+        } catch (java.lang.NullPointerException e) {
+            Log.e("SearchableActivity", "Chosen symbol in suggestions is null");
+        }
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,63 +103,9 @@ public class SearchableActivity extends AppCompatActivity {
         final String stockQuery = intent.getStringExtra(SearchManager.QUERY);
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
-            setSupportActionBar(mToolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finish();
-                }
-            });
-
-            loading = LoadingFragment.createInstance();
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.fragment_searchable, loading, "Loading")
-                    .commit();
-
-            Bundle bundle = new Bundle();
-            bundle.putString("QUERY", stockQuery);
-            fragment = SearchableFragment.createInstance(bundle, activity);
-
-            WorkDoneListener.setNewListener(new OnCompleteListener() {
-                @Override
-                public synchronized void doWork() {
-                    if (!isStopped) {
-                        getSupportFragmentManager().beginTransaction()
-                                .setReorderingAllowed(true)
-                                .replace(R.id.fragment_searchable, fragment, "fragmentSearchable")
-                                .commit();
-                    } else
-                        this.setWaiting();
-                }
-            }.setTag(Constants.DO_SEARCH_WORK));
-
+            actionSearch(stockQuery);
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            String tup = "AAPL";
-            try {
-                tup = intent.getDataString();
-            } catch (java.lang.IllegalStateException e) {
-                Log.e("SearchableActivity", "Illegal State Exception in ACTION_VIEW");
-            }
-
-            if (tup == null) {
-                Log.e("SearchableActivity", "Chosen suggestion provided null symbol");
-                finish();
-            }
-
-            SimpleStockTransporter transporter = (new GsonBuilder().create())
-                    .fromJson(tup, SimpleStockTransporter.class);
-
-            try {
-                FavouriteStock.addToFavourites(new Stock(
-                        transporter.symbol, transporter.description, "US", null, true));
-                BackgroundTaskHandler.subscribeOnLastPriceUpdates(new String[]{tup}, this);
-            } catch (java.lang.NullPointerException e) {
-                Log.e("SearchableActivity", "Chosen symbol in suggestions is null");
-            }
-            finish();
+            actionView(intent);
         } else {
             Log.e("SearchableActivity", "Wrong query to SearchableActivity");
             onDestroy();

@@ -2,6 +2,8 @@ package com.example.stonksapp.UI.Activities;
 
 import com.example.stonksapp.Constants;
 import com.example.stonksapp.R;
+import com.example.stonksapp.UI.Components.OnCompleteListener;
+import com.example.stonksapp.UI.Components.WorkDoneListener;
 import com.example.stonksapp.UI.Fragments.ManageFavouriteStonksFragment;
 import com.example.stonksapp.UI.Fragments.WatchCurrentStonksFragment;
 import com.example.stonksapp.financial.Background.BackgroundTaskHandler;
@@ -35,6 +37,16 @@ public class MainActivity extends AppCompatActivity {
 
     public static synchronized void definitionWorksListener() {
         if (++definitionWorksDone == 2) {
+            if (ifNetworkProvided) {
+                try {
+                    WorkDoneListener.complete(Constants.DO_DAILY_WORK, OnCompleteListener.Result.SUCCESS);
+                } catch (NullPointerException e) {
+//                    pass
+                }
+            }
+            if (currentActivity == null)
+                return;
+
             currentActivity.setDefaultFragment();
 
             if (ifNetworkProvided) {
@@ -66,29 +78,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         currentActivity = this;
 
-        if (savedInstanceState == null) {
-            if (BackgroundTaskHandler.myDb != null)
-                return;
+        if (BackgroundTaskHandler.myDb != null)
+            return;
 
-            BackgroundTaskHandler.defineDB(this);
-            WatchingStocks.define(this);
-            FavouriteStock.define(this);
+        BackgroundTaskHandler.defineDB(this);
+        WatchingStocks.define(this);
+        FavouriteStock.define(this);
 
-            watchCurrentStonksFragment =
-                    WatchCurrentStonksFragment.createInstance(null, this);
+        watchCurrentStonksFragment =
+                WatchCurrentStonksFragment.createInstance(null, this);
 
-            manageFavouriteStonksFragment =
-                    ManageFavouriteStonksFragment.createInstance(null, this);
+        manageFavouriteStonksFragment =
+                ManageFavouriteStonksFragment.createInstance(null, this);
 
-            LoadingFragment loading = LoadingFragment.createInstance();
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.frag, loading, "Loading")
-                    .commit();
+        LoadingFragment loading = LoadingFragment.createInstance();
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.frag, loading, "Loading")
+                .commit();
 
-            Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
-            setSupportActionBar(mToolbar);
-        }
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+        setSupportActionBar(mToolbar);
 
     }
 

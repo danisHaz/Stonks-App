@@ -30,6 +30,12 @@ public class WatchingStocks implements FavouriteObject {
             getter = new HTTPSRequestClient.GET();
 
         if (!prefs.getBoolean("isFirstBoot", true)) {
+            WorkDoneListener.setNewListener(new OnCompleteListener() {
+                @Override
+                public void doWork() {
+                    MainActivity.definitionWorksListener();
+                }
+            }.setTag(Constants.DO_WATCHING_DEFINITION_WORK));
             BackgroundTaskHandler.myDb.getAll(WatchingStocks.class);
         } else {
             StockSymbol[] a = getter.StockSymbols(String.format(
@@ -68,13 +74,6 @@ public class WatchingStocks implements FavouriteObject {
                     OnCompleteListener.Result.SUCCESS);
             return;
         }
-
-        WorkDoneListener.setNewListener(new OnCompleteListener() {
-            @Override
-            public void doWork() {
-                MainActivity.definitionWorksListener();
-            }
-        }.setTag(Constants.DO_WATCHING_DEFINITION_WORK));
 
     }
 
